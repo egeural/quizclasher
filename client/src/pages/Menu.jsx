@@ -116,6 +116,22 @@ export default function Menu() {
         >
           💬 Suggestions
         </button>
+        <a
+          href="https://www.linkedin.com/in/ege-ural-ab84152b7/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="menu-footer__link"
+        >
+          💼 LinkedIn
+        </a>
+        <a
+          href="https://github.com/egeural"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="menu-footer__link"
+        >
+          💻 GitHub
+        </a>
       </div>
     </div>
   );
