@@ -45,6 +45,15 @@ export default function Game() {
   if (!question) {
     return (
       <div className="glass-card glass-card--wide">
+        <div style={{ marginBottom: 16 }}>
+          <button
+            type="button"
+            className="menu-back"
+            onClick={() => nav("/lobby")}
+          >
+            {t("menu.back")}
+          </button>
+        </div>
         <h2 className="glass-card__title">{t("game.preparing")}</h2>
         <p className="glass-card__subtitle">
           {t("game.preparingSubtitle")}
@@ -61,6 +70,15 @@ export default function Game() {
 
   return (
     <div className="glass-card glass-card--wide">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={() => nav("/lobby")}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
       <div className="question-layout" style={{ gap: 18 }}>
         <div className="question-header">
           <div>

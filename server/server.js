@@ -2,9 +2,43 @@ const http = require("http");
 const WebSocket = require("ws");
 const url = require("url");
 const querystring = require("querystring");
+const nodemailer = require("nodemailer");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "egeural2005@gmail.com";
+
+// Email configuration
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = process.env.SMTP_PORT || 587;
+const SMTP_USER = process.env.SMTP_USER || ADMIN_EMAIL;
+const SMTP_PASS = process.env.SMTP_PASS || "";
+
+// Create email transporter
+let emailTransporter = null;
+if (SMTP_PASS) {
+  emailTransporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465, // true for 465, false for other ports
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASS,
+    },
+  });
+  
+  // Verify connection
+  emailTransporter.verify((error, success) => {
+    if (error) {
+      console.log("Email transporter verification failed:", error.message);
+      console.log("Suggestions will be logged but not emailed.");
+    } else {
+      console.log("Email transporter ready. Suggestions will be sent to:", ADMIN_EMAIL);
+    }
+  });
+} else {
+  console.log("SMTP_PASS not set. Suggestions will be logged but not emailed.");
+  console.log("Set SMTP_PASS environment variable to enable email notifications.");
+}
 
 // --- Game configuration ---
 const MAX_PLAYERS_PER_ROOM = 4;      // maximum players allowed in a room
@@ -353,15 +387,52 @@ const server = http.createServer((req, res) => {
         console.log("Timestamp:", suggestion.timestamp);
         console.log("=".repeat(50));
         
-        // TODO: In production, add email sending using nodemailer:
-        // const nodemailer = require('nodemailer');
-        // const transporter = nodemailer.createTransport({...});
-        // await transporter.sendMail({
-        //   to: ADMIN_EMAIL,
-        //   subject: `Quiz Clasher ${suggestion.type}: ${suggestion.username}`,
-        //   text: suggestion.message,
-        //   html: `<p><strong>From:</strong> ${suggestion.username}</p><p><strong>Type:</strong> ${suggestion.type}</p><p>${suggestion.message.replace(/\n/g, '<br>')}</p>`
-        // });
+        // Send email notification if transporter is configured
+        if (emailTransporter) {
+          const typeLabels = {
+            general: "General Suggestion",
+            feature: "Feature Request",
+            bug: "Bug Report",
+            question: "Question",
+            other: "Other",
+          };
+          
+          const mailOptions = {
+            from: `"Quiz Clasher" <${SMTP_USER}>`,
+            to: ADMIN_EMAIL,
+            subject: `Quiz Clasher ${typeLabels[suggestion.type] || suggestion.type}: ${suggestion.username}`,
+            text: `New ${typeLabels[suggestion.type] || suggestion.type} from Quiz Clasher\n\n` +
+                  `From: ${suggestion.username}\n` +
+                  `Type: ${typeLabels[suggestion.type] || suggestion.type}\n` +
+                  `Timestamp: ${suggestion.timestamp}\n\n` +
+                  `Message:\n${suggestion.message}`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #3b82f6;">New ${typeLabels[suggestion.type] || suggestion.type}</h2>
+                <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                  <p style="margin: 8px 0;"><strong>From:</strong> ${suggestion.username}</p>
+                  <p style="margin: 8px 0;"><strong>Type:</strong> ${typeLabels[suggestion.type] || suggestion.type}</p>
+                  <p style="margin: 8px 0;"><strong>Timestamp:</strong> ${new Date(suggestion.timestamp).toLocaleString()}</p>
+                </div>
+                <div style="background: #ffffff; padding: 20px; border-left: 4px solid #3b82f6; margin: 16px 0;">
+                  <h3 style="margin-top: 0; color: #1f2937;">Message:</h3>
+                  <p style="color: #374151; white-space: pre-wrap; line-height: 1.6;">${suggestion.message.replace(/\n/g, '<br>')}</p>
+                </div>
+                <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
+                  This is an automated message from Quiz Clasher Suggestions System.
+                </p>
+              </div>
+            `,
+          };
+          
+          emailTransporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.error("Failed to send email notification:", error.message);
+            } else {
+              console.log("Email notification sent successfully:", info.messageId);
+            }
+          });
+        }
         
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ 

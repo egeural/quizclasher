@@ -21,6 +21,15 @@ export default function Result() {
   if (!result || !question) {
     return (
       <div className="glass-card glass-card--wide">
+        <div style={{ marginBottom: 16 }}>
+          <button
+            type="button"
+            className="menu-back"
+            onClick={() => nav("/lobby")}
+          >
+            {t("menu.back")}
+          </button>
+        </div>
         <h2 className="glass-card__title">{t("result.loading")}</h2>
         <p className="glass-card__subtitle">
           {t("result.loadingSubtitle")}
@@ -38,6 +47,15 @@ export default function Result() {
 
   return (
     <div className="glass-card glass-card--wide">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={() => nav("/lobby")}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
       <h2 className="glass-card__title">{t("result.roundResult", { round: result.round })}</h2>
       <p className="glass-card__subtitle">
         {t("result.correctAnswer")}: <b>{question.question.choices[correct]}</b>

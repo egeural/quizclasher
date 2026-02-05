@@ -22,6 +22,22 @@ export default function Menu() {
 
   return (
     <div className="glass-card glass-card--wide menu-page">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={() => {
+            if (subView) {
+              setSubView(null);
+            } else {
+              nav("/");
+            }
+          }}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
+      
       <div className="menu-hero">
         <h1 className="menu-hero__title">{t("menu.welcome", { username })}</h1>
         <p className="menu-hero__subtitle">
@@ -54,13 +70,6 @@ export default function Menu() {
 
       {subView === "createOwn" && (
         <div className="menu-sub">
-          <button
-            type="button"
-            className="menu-back"
-            onClick={() => setSubView(null)}
-          >
-            {t("menu.back")}
-          </button>
           <h2 className="menu-sub__title">{t("menu.createOwn")}</h2>
           <div className="menu-sub-grid">
             {CREATE_OWN_OPTIONS.map((opt) => (
@@ -81,13 +90,6 @@ export default function Menu() {
 
       {subView === "preUploaded" && (
         <div className="menu-sub">
-          <button
-            type="button"
-            className="menu-back"
-            onClick={() => setSubView(null)}
-          >
-            {t("menu.back")}
-          </button>
           <h2 className="menu-sub__title">{t("menu.preUploaded")}</h2>
           <div className="menu-sub-grid">
             {PRE_UPLOADED_OPTIONS.map((opt) => (

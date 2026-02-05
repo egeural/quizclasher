@@ -20,6 +20,15 @@ export default function Lobby() {
 
   return (
     <div className="glass-card">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={() => nav("/menu")}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
       <img src="/logo.png" alt="Quiz Clasher" className="logo-main" />
 
       <div className="badge" style={{ marginBottom: 12 }}>

@@ -306,13 +306,13 @@ export default function History() {
   if (view === "start") {
     return (
       <div className="glass-card glass-card--wide">
-        <div className="love-menu" style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 16 }}>
           <button
             type="button"
-            className="btn btn-ghost"
+            className="menu-back"
             onClick={() => nav("/menu")}
           >
-            {t("quiz.backToMenu")}
+            {t("menu.back")}
           </button>
         </div>
         <h1 className="glass-card__title">📜 {t("quiz.historyQuiz")}</h1>
@@ -337,9 +337,13 @@ export default function History() {
 
   return (
     <div className="glass-card glass-card--wide">
-      <div className="love-menu" style={{ marginBottom: 12 }}>
-        <button type="button" className="btn btn-ghost" onClick={() => setView("start")}>
-          {t("quiz.backToQuiz")}
+      <div style={{ marginBottom: 16 }}>
+        <button 
+          type="button" 
+          className="menu-back" 
+          onClick={() => setView("start")}
+        >
+          {t("menu.back")}
         </button>
       </div>
       <h2 className="sport-section__title">{t("quiz.yourHistoryQuestions")}</h2>
@@ -456,7 +460,7 @@ function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
                 {t("quiz.playAgain")}
               </button>
               <button type="button" className="btn btn-ghost" onClick={onBack}>
-                {t("quiz.backToMenu")}
+                {t("menu.back")}
               </button>
             </div>
           </div>
@@ -468,6 +472,15 @@ function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
   const total = quiz.questions.length;
   return (
     <div className="glass-card glass-card--wide">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={onBack}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
       <div className="love-quiz">
         <div className="question-layout">
           <div className="question-header">

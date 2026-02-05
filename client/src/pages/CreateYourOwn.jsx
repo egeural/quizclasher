@@ -137,13 +137,13 @@ export default function CreateYourOwn() {
 
   return (
     <div className="glass-card glass-card--wide">
-      <div className="love-menu" style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 16 }}>
         <button
           type="button"
-          className="btn btn-ghost"
+          className="menu-back"
           onClick={() => nav("/menu")}
         >
-          {t("quiz.backToMenu")}
+          {t("menu.back")}
         </button>
       </div>
       <h1 className="glass-card__title">{t("createOwn.title")}</h1>
@@ -321,7 +321,7 @@ function CustomQuizPlay({ quiz, setQuiz, onExit }) {
               %{percentage}
             </div>
             <button type="button" className="btn btn-secondary" onClick={onExit} style={{ marginTop: 20 }}>
-              {t("createOwn.backToQuiz")}
+              {t("menu.back")}
             </button>
           </div>
         </div>
@@ -332,6 +332,15 @@ function CustomQuizPlay({ quiz, setQuiz, onExit }) {
   const total = quiz.questions.length;
   return (
     <div className="glass-card glass-card--wide">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={onExit}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
       <div className="love-quiz">
         <div className="question-layout">
           <div className="question-header">

@@ -85,13 +85,13 @@ export default function Suggestions() {
 
   return (
     <div className="glass-card glass-card--wide">
-      <div className="love-menu" style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 16 }}>
         <button
           type="button"
-          className="btn btn-ghost"
+          className="menu-back"
           onClick={() => nav("/menu")}
         >
-          {t("quiz.backToMenu")}
+          {t("menu.back")}
         </button>
       </div>
       

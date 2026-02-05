@@ -242,13 +242,13 @@ export default function LoveCouple() {
     <div className="glass-card glass-card--wide">
       {!quiz && (
         <>
-          <div className="love-menu" style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 16 }}>
             <button
               type="button"
-              className="btn btn-ghost"
+              className="menu-back"
               onClick={() => nav("/menu")}
             >
-              {t("quiz.backToMenu")}
+              {t("menu.back")}
             </button>
           </div>
           <h1 className="glass-card__title">{t("loveCouple.title")}</h1>
@@ -498,13 +498,13 @@ export default function LoveCouple() {
       )}
 
       {quiz && (
-        <LoveQuizView quiz={quiz} setQuiz={setQuiz} />
+        <LoveQuizView quiz={quiz} setQuiz={setQuiz} onExit={() => setQuiz(null)} />
       )}
     </div>
   );
 }
 
-function LoveQuizView({ quiz, setQuiz }) {
+function LoveQuizView({ quiz, setQuiz, onExit }) {
   const { t } = useLanguage();
   const current = quiz.questions[quiz.currentIndex];
 
@@ -612,9 +612,19 @@ function LoveQuizView({ quiz, setQuiz }) {
   const total = quiz.questions.length;
 
   return (
-    <div className="love-quiz">
-      <div className="question-layout">
-        <div className="question-header">
+    <div className="glass-card glass-card--wide">
+      <div style={{ marginBottom: 16 }}>
+        <button
+          type="button"
+          className="menu-back"
+          onClick={onExit}
+        >
+          {t("menu.back")}
+        </button>
+      </div>
+      <div className="love-quiz">
+        <div className="question-layout">
+          <div className="question-header">
           <div>
             <div className="round-label">{t("loveCouple.question")}</div>
             <div style={{ fontSize: 22, fontWeight: 800 }}>
@@ -649,6 +659,7 @@ function LoveQuizView({ quiz, setQuiz }) {
               </button>
             ))}
           </div>
+        </div>
         </div>
       </div>
     </div>
