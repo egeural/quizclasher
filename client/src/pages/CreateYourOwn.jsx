@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
 const STORAGE_KEY_PREFIX = "bf_customquiz_";
@@ -42,6 +43,7 @@ function advanceQuizState(state, pickedIndex) {
 
 export default function CreateYourOwn() {
   const { t } = useLanguage();
+  const nav = useNavigate();
   const username = window.localStorage.getItem("bf_username") || "guest";
   const storageKey = STORAGE_KEY_PREFIX + username;
 
@@ -135,6 +137,15 @@ export default function CreateYourOwn() {
 
   return (
     <div className="glass-card glass-card--wide">
+      <div className="love-menu" style={{ marginBottom: 12 }}>
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => nav("/menu")}
+        >
+          {t("quiz.backToMenu")}
+        </button>
+      </div>
       <h1 className="glass-card__title">{t("createOwn.title")}</h1>
       <p className="glass-card__subtitle">
         {t("createOwn.subtitle", { count: QUIZ_QUESTION_COUNT })}
@@ -153,7 +164,7 @@ export default function CreateYourOwn() {
           className={`btn btn-ghost ${view === "list" ? "love-menu__btn--active" : ""}`}
           onClick={() => setView("list")}
         >
-          {t("createOwn.completed", { count: completedQuestions.length })}
+          {t("createOwn.completedCount", { count: completedQuestions.length })}
         </button>
         <button
           type="button"

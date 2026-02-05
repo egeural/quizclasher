@@ -1022,6 +1022,15 @@ export default function Sport() {
   if (view === "start") {
     return (
       <div className="glass-card glass-card--wide">
+        <div className="love-menu" style={{ marginBottom: 12 }}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => nav("/menu")}
+          >
+            {t("quiz.backToMenu")}
+          </button>
+        </div>
         <h1 className="glass-card__title">⚽ {t("quiz.sportQuiz")}</h1>
         <p className="glass-card__subtitle">
           {t("quiz.sportSubtitle", { count: SPORT_QUIZ_COUNT, time: SPORT_QUIZ_TIME })}

@@ -306,6 +306,15 @@ export default function History() {
   if (view === "start") {
     return (
       <div className="glass-card glass-card--wide">
+        <div className="love-menu" style={{ marginBottom: 12 }}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => nav("/menu")}
+          >
+            {t("quiz.backToMenu")}
+          </button>
+        </div>
         <h1 className="glass-card__title">📜 {t("quiz.historyQuiz")}</h1>
         <p className="glass-card__subtitle">
           {t("quiz.historySubtitle", { count: HISTORY_QUIZ_COUNT, time: HISTORY_QUIZ_TIME })}

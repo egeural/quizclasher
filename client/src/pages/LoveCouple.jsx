@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
 const TEMPLATE_GROUPS = [
@@ -133,6 +134,7 @@ function advanceQuizState(state, pickedIndex) {
 
 export default function LoveCouple() {
   const { t } = useLanguage();
+  const nav = useNavigate();
   const username = window.localStorage.getItem("bf_username") || "guest";
   const storageKey = STORAGE_KEY_PREFIX + username;
 
@@ -240,6 +242,15 @@ export default function LoveCouple() {
     <div className="glass-card glass-card--wide">
       {!quiz && (
         <>
+          <div className="love-menu" style={{ marginBottom: 12 }}>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => nav("/menu")}
+            >
+              {t("quiz.backToMenu")}
+            </button>
+          </div>
           <h1 className="glass-card__title">{t("loveCouple.title")}</h1>
           <p className="glass-card__subtitle">
             {t("loveCouple.subtitle", { username })}

@@ -1,7 +1,10 @@
 const http = require("http");
 const WebSocket = require("ws");
+const url = require("url");
+const querystring = require("querystring");
 
 const PORT = process.env.PORT || 3000;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "egeural2005@gmail.com";
 
 // --- Game configuration ---
 const MAX_PLAYERS_PER_ROOM = 4;      // maximum players allowed in a room
@@ -287,7 +290,100 @@ function resolveRound(code, room) {
   }, RESULT_DURATION_MS);
 }
 
+// Handle CORS
+function setCORSHeaders(res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
+// Store suggestions (in production, use a database)
+const suggestions = [];
+
 const server = http.createServer((req, res) => {
+  setCORSHeaders(res);
+  
+  const parsedUrl = url.parse(req.url, true);
+  const path = parsedUrl.pathname;
+  const method = req.method;
+
+  // Handle OPTIONS for CORS
+  if (method === "OPTIONS") {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
+  // API endpoint for suggestions
+  if (path === "/api/suggestions" && method === "POST") {
+    let body = "";
+    
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    
+    req.on("end", () => {
+      try {
+        const data = JSON.parse(body);
+        const { message, username, type } = data;
+        
+        if (!message || !message.trim()) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: false, error: "Message is required" }));
+          return;
+        }
+
+        const suggestion = {
+          id: Date.now().toString(),
+          message: message.trim(),
+          username: username || "Anonymous",
+          type: type || "general",
+          timestamp: new Date().toISOString(),
+          ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown",
+        };
+
+        suggestions.push(suggestion);
+        
+        // Log suggestion
+        console.log("=".repeat(50));
+        console.log("NEW SUGGESTION RECEIVED");
+        console.log("Type:", suggestion.type);
+        console.log("From:", suggestion.username);
+        console.log("Message:", suggestion.message);
+        console.log("Timestamp:", suggestion.timestamp);
+        console.log("=".repeat(50));
+        
+        // TODO: In production, add email sending using nodemailer:
+        // const nodemailer = require('nodemailer');
+        // const transporter = nodemailer.createTransport({...});
+        // await transporter.sendMail({
+        //   to: ADMIN_EMAIL,
+        //   subject: `Quiz Clasher ${suggestion.type}: ${suggestion.username}`,
+        //   text: suggestion.message,
+        //   html: `<p><strong>From:</strong> ${suggestion.username}</p><p><strong>Type:</strong> ${suggestion.type}</p><p>${suggestion.message.replace(/\n/g, '<br>')}</p>`
+        // });
+        
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ 
+          success: true, 
+          message: "Thank you for your suggestion! We'll review it soon." 
+        }));
+      } catch (error) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: false, error: "Invalid request data" }));
+      }
+    });
+    return;
+  }
+
+  // Get suggestions endpoint (for admin - add authentication in production)
+  if (path === "/api/suggestions" && method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ suggestions }));
+    return;
+  }
+
+  // Default response
   res.writeHead(200);
   res.end("Quiz Clasher WS server running.\n");
 });
