@@ -289,13 +289,13 @@ function resolveRound(code, room) {
 
 const server = http.createServer((req, res) => {
   res.writeHead(200);
-  res.end("Bil & Fethet WS server running.\n");
+  res.end("Quiz Clasher WS server running.\n");
 });
 
 const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws) => {
-  safeSend(ws, { type: "hello", message: "Connected to Bil & Fethet server" });
+  safeSend(ws, { type: "hello", message: "Connected to Quiz Clasher server" });
 
   ws.on("message", (raw) => {
     let msg;

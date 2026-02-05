@@ -6,7 +6,7 @@ export default function Header() {
       color: "white",
       fontWeight: 600
     }}>
-      Bil & Fethet
+      Quiz Clasher
     </div>
   );
 }

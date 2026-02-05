@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWs } from "../state/ws.jsx";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Lobby() {
   const nav = useNavigate();
+  const { t } = useLanguage();
   const { status, room, config, error, actions } = useWs();
 
   const [name, setName] = useState("");
@@ -18,7 +20,7 @@ export default function Lobby() {
 
   return (
     <div className="glass-card">
-      <img src="/logo.png" alt="Bil ve Fethet" className="logo-main" />
+      <img src="/logo.png" alt="Quiz Clasher" className="logo-main" />
 
       <div className="badge" style={{ marginBottom: 12 }}>
         <span
@@ -29,39 +31,40 @@ export default function Lobby() {
         <span>WS: {status}</span>
       </div>
 
-      <h1 className="glass-card__title">Bil ve Fethet</h1>
+      <h1 className="glass-card__title">{t("lobby.title")}</h1>
       <p className="glass-card__subtitle">
-        Tarih bilginle odanı kur, savaşçıları davet et ve en hızlı doğru cevabı
-        veren komutan ol. Oda {config?.maxPlayers ?? 3} kişiyle başlar,
-        ilk {(config?.winScore ?? 0) || "yüksek skor"} puana ulaşan tahtı alır.
+        {t("lobby.subtitle", { 
+          maxPlayers: config?.maxPlayers ?? 3, 
+          winScore: (config?.winScore ?? 0) || t("lobby.highScore") 
+        })}
       </p>
 
       <div className="field-group">
         <div>
-          <div className="field-label">Savaşçı ismi</div>
+          <div className="field-label">{t("lobby.warriorName")}</div>
           <input
             className="text-input"
-            placeholder="Örn. Fatih, Mete Han..."
+            placeholder={t("lobby.warriorPlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
 
         <div>
-          <div className="field-label">Oda işlemleri</div>
+          <div className="field-label">{t("lobby.roomOperations")}</div>
           <div className="button-row">
             <button
               onClick={() => actions.createRoom(name)}
               disabled={!name || status !== "connected"}
               className="btn btn-primary"
             >
-              YENİ ODA
+              {t("lobby.newRoom")}
             </button>
 
             <div style={{ display: "flex", gap: 6 }}>
               <input
                 className="text-input"
-                placeholder="ODA KODU"
+                placeholder={t("lobby.roomCode")}
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 style={{ textAlign: "center", textTransform: "uppercase" }}
@@ -76,22 +79,22 @@ export default function Lobby() {
           className="btn btn-secondary"
           style={{ width: "100%", marginTop: 2 }}
         >
-          ODAYA KATIL
+          {t("lobby.joinRoom")}
         </button>
 
         {room && (
           <div className="room-panel">
             <div className="room-panel__header">
               <div>
-                <div style={{ fontSize: 12, opacity: 0.8 }}>Oda kodu</div>
+                <div style={{ fontSize: 12, opacity: 0.8 }}>{t("lobby.roomCodeLabel")}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: "#fbbf24" }}>
                   {room.code}
                 </div>
               </div>
               <div style={{ textAlign: "right", fontSize: 12, opacity: 0.9 }}>
-                Faz: <b>{room.phase.toUpperCase()}</b>
+                {t("lobby.phase")}: <b>{room.phase.toUpperCase()}</b>
                 <br />
-                Oyuncu: {room.players.length}/
+                {t("lobby.players")}: {room.players.length}/
                 {config?.maxPlayers ?? 3}
               </div>
             </div>
@@ -100,7 +103,7 @@ export default function Lobby() {
               {room.players.map((p) => (
                 <li key={p.id}>
                   {p.name}{" "}
-                  <span style={{ opacity: 0.7 }}>({p.score} puan)</span>
+                  <span style={{ opacity: 0.7 }}>({p.score} {t("lobby.points")})</span>
                 </li>
               ))}
             </div>
@@ -108,10 +111,10 @@ export default function Lobby() {
             {room.ownerId === null ? null : (
               <div style={{ marginTop: 10, display: "flex", gap: 8, alignItems: "center" }}>
                 <span className="result-meta">
-                  Oda lideri:{" "}
+                  {t("lobby.roomLeader")}:{" "}
                   <b>
                     {room.players.find((p) => p.id === room.ownerId)?.name ??
-                      "Bilinmiyor"}
+                      t("lobby.unknown")}
                   </b>
                 </span>
                 {room.ownerId === (room && room.players.find((p) => p.id)?.id) ? null : null}
@@ -128,18 +131,19 @@ export default function Lobby() {
                       disabled={room.players.length < (config?.minPlayersToStart ?? 2)}
                       onClick={() => actions.startGame()}
                     >
-                      Oyunu şimdi başlat
+                      {t("lobby.startGameNow")}
                     </button>
                   )}
               </div>
             )}
 
             <div className="room-panel__hint">
-              * Oda {config?.maxPlayers ?? 3} kişi olduğunda otomatik başlar,{" "}
-              oda lideri en az {(config?.minPlayersToStart ?? 2)} kişiyle erken
-              başlatabilir. Soru süresi ~
-              {(config?.questionDurationMs ?? 15000) / 1000}s, ilk{" "}
-              {(config?.winScore ?? 0) || "yüksek skor"} puana ulaşan kazanır.
+              {t("lobby.roomHint", {
+                maxPlayers: config?.maxPlayers ?? 3,
+                minPlayers: config?.minPlayersToStart ?? 2,
+                duration: (config?.questionDurationMs ?? 15000) / 1000,
+                winScore: (config?.winScore ?? 0) || t("lobby.highScore"),
+              })}
             </div>
           </div>
         )}

@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWs } from "../state/ws.jsx";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Game() {
   const nav = useNavigate();
+  const { t } = useLanguage();
   const { room, question, result, selfId, chat, actions } = useWs();
 
   const [now, setNow] = useState(Date.now());
@@ -43,9 +45,9 @@ export default function Game() {
   if (!question) {
     return (
       <div className="glass-card glass-card--wide">
-        <h2 className="glass-card__title">Oyun hazırlanıyor</h2>
+        <h2 className="glass-card__title">{t("game.preparing")}</h2>
         <p className="glass-card__subtitle">
-          Savaş alanı kuruluyor... Odan dolduğunda ilk soru otomatik gelecek.
+          {t("game.preparingSubtitle")}
         </p>
       </div>
     );
@@ -62,7 +64,7 @@ export default function Game() {
       <div className="question-layout" style={{ gap: 18 }}>
         <div className="question-header">
           <div>
-            <div className="round-label">Round</div>
+            <div className="round-label">{t("game.round")}</div>
             <div style={{ fontSize: 22, fontWeight: 800 }}>{question.round}</div>
           </div>
           <div className="timer-chip">
@@ -106,24 +108,24 @@ export default function Game() {
                 disabled={picked === null || sent}
                 className="btn btn-secondary"
               >
-                Cevabı gönder
+                {t("game.sendAnswer")}
               </button>
 
               <div style={{ opacity: 0.8, fontSize: 13 }}>
-                Sen: <b>#{selfId}</b>{" "}
-                {sent ? " • Cevabın kilitlendi" : "• Cevabını seçip gönder"}
+                {t("game.you")}: <b>#{selfId}</b>{" "}
+                {sent ? ` • ${t("game.answerLocked")}` : t("game.selectAndSend")}
               </div>
             </div>
           </div>
 
           <div className="question-card" style={{ maxHeight: 260, display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.18em", color: "#9ca3af", marginBottom: 6 }}>
-              Oda sohbeti
+              {t("game.roomChat")}
             </div>
             <div style={{ flex: 1, overflowY: "auto", fontSize: 13, paddingRight: 4 }}>
               {chat.length === 0 && (
                 <div className="result-meta">
-                  Komutanlar cevaplarını yazarken burada taktiklerini paylaşabilir.
+                  {t("game.chatPlaceholder")}
                 </div>
               )}
               {chat.map((m, idx) => (
@@ -142,6 +144,7 @@ export default function Game() {
 }
 
 function ChatInput({ onSend }) {
+  const { t } = useLanguage();
   const [value, setValue] = useState("");
 
   const submit = () => {
@@ -155,7 +158,7 @@ function ChatInput({ onSend }) {
     <div style={{ marginTop: 10, display: "flex", gap: 6 }}>
       <input
         className="text-input"
-        placeholder="Mesaj yaz..."
+        placeholder={t("game.messagePlaceholder")}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
@@ -166,7 +169,7 @@ function ChatInput({ onSend }) {
         }}
       />
       <button className="btn btn-ghost" onClick={submit}>
-        Gönder
+        {t("game.send")}
       </button>
     </div>
   );

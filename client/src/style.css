@@ -382,6 +382,50 @@ body {
   color: #fbbf24;
 }
 
+.language-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 30;
+  min-width: 70px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+  color: #e5e7eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+  backdrop-filter: blur(10px);
+}
+
+.language-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.7);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.8);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+}
+
+.language-toggle__flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.language-toggle__text {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
 .music-toggle {
   position: fixed;
   bottom: 20px;

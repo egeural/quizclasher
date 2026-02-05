@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Login() {
   const nav = useNavigate();
+  const { t } = useLanguage();
   const [username, setUsername] = useState(
     () => window.localStorage.getItem("bf_username") || ""
   );
@@ -17,18 +19,17 @@ export default function Login() {
 
   return (
     <div className="glass-card">
-      <h1 className="glass-card__title">Bil &amp; Fethet</h1>
+      <h1 className="glass-card__title">{t("login.title")}</h1>
       <p className="glass-card__subtitle">
-        Kendi tasarladığın quizlerle sevgilini veya arkadaş grubunu test et.
-        Devam etmek için kendine özel bir kullanıcı adı seç.
+        {t("login.subtitle")}
       </p>
 
       <form onSubmit={submit} className="field-group">
         <div>
-          <div className="field-label">Kullanıcı adı</div>
+          <div className="field-label">{t("login.usernameLabel")}</div>
           <input
             className="text-input"
-            placeholder="ör: ege123"
+            placeholder={t("login.usernamePlaceholder")}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -39,11 +40,11 @@ export default function Login() {
           disabled={!username.trim()}
           className="btn btn-primary"
         >
-          Giriş yap
+          {t("login.loginButton")}
         </button>
 
         <p className="glass-card__subtitle" style={{ marginTop: 4 }}>
-          Bu isim cihazında saklanır ve hazırladığın quizlerle eşleştirilir.
+          {t("login.usernameNote")}
         </p>
       </form>
     </div>

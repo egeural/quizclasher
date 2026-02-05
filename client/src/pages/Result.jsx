@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWs } from "../state/ws.jsx";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Result() {
   const nav = useNavigate();
+  const { t } = useLanguage();
   const { room, result, question, selfId, gameOver } = useWs();
 
   useEffect(() => {
@@ -19,9 +21,9 @@ export default function Result() {
   if (!result || !question) {
     return (
       <div className="glass-card glass-card--wide">
-        <h2 className="glass-card__title">Sonuç yükleniyor</h2>
+        <h2 className="glass-card__title">{t("result.loading")}</h2>
         <p className="glass-card__subtitle">
-          Savaş meydanındaki hamleler toplanıyor...
+          {t("result.loadingSubtitle")}
         </p>
       </div>
     );
@@ -36,9 +38,9 @@ export default function Result() {
 
   return (
     <div className="glass-card glass-card--wide">
-      <h2 className="glass-card__title">Round {result.round} sonucu</h2>
+      <h2 className="glass-card__title">{t("result.roundResult", { round: result.round })}</h2>
       <p className="glass-card__subtitle">
-        Doğru cevap: <b>{question.question.choices[correct]}</b>
+        {t("result.correctAnswer")}: <b>{question.question.choices[correct]}</b>
       </p>
 
       <div className="result-list">
@@ -51,15 +53,15 @@ export default function Result() {
           >
             <div>
               <div>
-                <b>{a.name}</b> {a.playerId === selfId ? "(sen)" : ""}
+                <b>{a.name}</b> {a.playerId === selfId ? `(${t("result.you")})` : ""}
               </div>
               <div className="result-meta">
-                cevap:{" "}
+                {t("result.answer")}:{" "}
                 {a.choiceIndex === null
                   ? "—"
                   : question.question.choices[a.choiceIndex]}{" "}
-                • süre: {a.timeMs ?? "—"}ms •{" "}
-                {a.correct ? "doğru" : "yanlış"}
+                • {t("result.time")}: {a.timeMs ?? "—"}ms •{" "}
+                {a.correct ? t("result.correct") : t("result.wrong")}
               </div>
             </div>
             <div className="result-points">+{a.points}</div>
@@ -77,7 +79,7 @@ export default function Result() {
             margin: "0 0 6px",
           }}
         >
-          Genel Skor Tablosu
+          {t("result.leaderboard")}
         </h3>
         <div className="result-list">
           {leaderboard.map((p, idx) => (
@@ -90,9 +92,9 @@ export default function Result() {
               <div>
                 <div>
                   #{idx + 1} <b>{p.name}</b>{" "}
-                  {p.id === selfId ? "(sen)" : ""}
+                  {p.id === selfId ? `(${t("result.you")})` : ""}
                 </div>
-                <div className="result-meta">toplam skor: {p.score}</div>
+                <div className="result-meta">{t("result.totalScore")}: {p.score}</div>
               </div>
               <div className="result-points">{p.score}</div>
             </div>
@@ -102,15 +104,14 @@ export default function Result() {
 
       {gameOver ? (
         <p className="glass-card__subtitle" style={{ marginTop: 16 }}>
-          Oyun bitti!{" "}
+          {t("result.gameOver")}{" "}
           <b>
-            {gameOver.winner.name} ({gameOver.winner.score} puan)
-          </b>{" "}
-          bu savaşın galibi.
+            {t("result.winner", { name: gameOver.winner.name, score: gameOver.winner.score })}
+          </b>
         </p>
       ) : (
         <p className="glass-card__subtitle" style={{ marginTop: 16 }}>
-          Yeni tur birkaç saniye içinde otomatik başlayacak. Hazır ol komutan!
+          {t("result.nextRound")}
         </p>
       )}
     </div>

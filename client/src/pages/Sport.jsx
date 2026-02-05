@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
 const STORAGE_KEY_PREFIX = "bf_sportquiz_";
 
@@ -934,6 +935,7 @@ function advanceSportQuiz(state, pickedIndex) {
 }
 
 export default function Sport() {
+  const { t } = useLanguage();
   const nav = useNavigate();
   const location = useLocation();
   const username = window.localStorage.getItem("bf_username") || "guest";
@@ -977,7 +979,7 @@ export default function Sport() {
   const saveAll = () => {
     const payload = { customQs, savedAt: new Date().toISOString() };
     window.localStorage.setItem(storageKey, JSON.stringify(payload));
-    alert("Sport soruların kaydedildi!");
+    alert(t("quiz.saved"));
   };
 
   const startQuiz = () => {
@@ -1020,9 +1022,9 @@ export default function Sport() {
   if (view === "start") {
     return (
       <div className="glass-card glass-card--wide">
-        <h1 className="glass-card__title">⚽ Sport Quiz</h1>
+        <h1 className="glass-card__title">⚽ {t("quiz.sportQuiz")}</h1>
         <p className="glass-card__subtitle">
-          {SPORT_QUIZ_COUNT} soru, her biri {SPORT_QUIZ_TIME} saniye. Hazır mısın?
+          {t("quiz.sportSubtitle", { count: SPORT_QUIZ_COUNT, time: SPORT_QUIZ_TIME })}
         </p>
         <div className="sport-start-actions">
           <button
@@ -1030,14 +1032,14 @@ export default function Sport() {
             className="btn btn-secondary sport-start-btn"
             onClick={startQuiz}
           >
-            Quiz'i başlat
+            {t("quiz.startQuiz")}
           </button>
           <button
             type="button"
             className="menu-footer__link"
             onClick={() => setView("builder")}
           >
-            Kendi spor sorularımı ekle / düzenle
+            {t("quiz.addEditSportQuestions")}
           </button>
         </div>
       </div>
@@ -1052,62 +1054,61 @@ export default function Sport() {
           className="btn btn-ghost"
           onClick={() => setView("start")}
         >
-          ← Quiz'e dön
+          {t("quiz.backToQuiz")}
         </button>
       </div>
-      <h2 className="sport-section__title">Kendi Spor Soruların</h2>
+      <h2 className="sport-section__title">{t("quiz.yourSportQuestions")}</h2>
       <p className="glass-card__subtitle" style={{ marginBottom: 12 }}>
-        Her soru için 1 doğru ve 3 yanlış cevap (şık) yaz. Hepsi senin
-        quiz'inde seçenek olarak görünecek.
+        {t("quiz.sportBuilderDesc")}
       </p>
 
       <div className="quiz-edit-list">
         {customQs.map((q) => (
           <div key={q.id} className="quiz-edit-card">
             <div className="quiz-edit-card__row">
-              <label className="choice-label">Soru metni</label>
+              <label className="choice-label">{t("createOwn.questionText")}</label>
               <input
                 className="text-input choice-input"
                 value={q.text}
                 onChange={(e) => updateCustom(q.id, "text", e.target.value)}
-                placeholder="Örn: Hangi takım 2022 Dünya Kupası'nı kazandı?"
+                placeholder={t("quiz.sportQuestionPlaceholder")}
               />
             </div>
             <div className="choice-grid">
               <div className="quiz-edit-card__row choice-row--correct">
-                <label className="choice-label">✓ Doğru cevap</label>
+                <label className="choice-label">{t("createOwn.correctAnswer")}</label>
                 <input
                   className="text-input choice-input"
                   value={q.correct}
                   onChange={(e) => updateCustom(q.id, "correct", e.target.value)}
-                  placeholder="Doğru şıkkı yaz"
+                  placeholder={t("createOwn.correctPlaceholder")}
                 />
               </div>
               <div className="quiz-edit-card__row">
-                <label className="choice-label">✗ Yanlış cevap 1</label>
+                <label className="choice-label">{t("createOwn.wrongAnswer", { num: 1 })}</label>
                 <input
                   className="text-input choice-input"
                   value={q.wrong1}
                   onChange={(e) => updateCustom(q.id, "wrong1", e.target.value)}
-                  placeholder="Yanlış şık"
+                  placeholder={t("createOwn.wrongPlaceholder")}
                 />
               </div>
               <div className="quiz-edit-card__row">
-                <label className="choice-label">✗ Yanlış cevap 2</label>
+                <label className="choice-label">{t("createOwn.wrongAnswer", { num: 2 })}</label>
                 <input
                   className="text-input choice-input"
                   value={q.wrong2}
                   onChange={(e) => updateCustom(q.id, "wrong2", e.target.value)}
-                  placeholder="Yanlış şık"
+                  placeholder={t("createOwn.wrongPlaceholder")}
                 />
               </div>
               <div className="quiz-edit-card__row">
-                <label className="choice-label">✗ Yanlış cevap 3</label>
+                <label className="choice-label">{t("createOwn.wrongAnswer", { num: 3 })}</label>
                 <input
                   className="text-input choice-input"
                   value={q.wrong3}
                   onChange={(e) => updateCustom(q.id, "wrong3", e.target.value)}
-                  placeholder="Yanlış şık"
+                  placeholder={t("createOwn.wrongPlaceholder")}
                 />
               </div>
             </div>
@@ -1116,11 +1117,11 @@ export default function Sport() {
       </div>
 
       <button type="button" className="btn btn-ghost" onClick={addCustom}>
-        + Yeni spor sorusu ekle
+        {t("quiz.addSportQuestion")}
       </button>
       <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
         <button type="button" className="btn btn-secondary" onClick={saveAll}>
-          Kaydet
+          {t("createOwn.save")}
         </button>
       </div>
     </div>
@@ -1128,6 +1129,7 @@ export default function Sport() {
 }
 
 function SportQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
+  const { t } = useLanguage();
   const current = quiz.questions[quiz.currentIndex];
 
   useEffect(() => {
@@ -1159,7 +1161,7 @@ function SportQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
           <div className="love-results__content">
             <img src={sportGiphy} alt="" className="result-giphy" />
             <div className="love-results__emoji">⚽</div>
-            <h1 className="glass-card__title">Sonuç</h1>
+            <h1 className="glass-card__title">{t("quiz.result")}</h1>
             <div className="love-results__score" style={{ color: "#22c55e" }}>
               {correctCount} / {total}
             </div>
@@ -1168,10 +1170,10 @@ function SportQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "center", flexWrap: "wrap" }}>
               <button type="button" className="btn btn-secondary" onClick={onPlayAgain}>
-                Tekrar oyna
+                {t("quiz.playAgain")}
               </button>
               <button type="button" className="btn btn-ghost" onClick={onBack}>
-                Menüye dön
+                {t("quiz.backToMenu")}
               </button>
             </div>
           </div>
@@ -1187,7 +1189,7 @@ function SportQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
         <div className="question-layout">
           <div className="question-header">
             <div>
-              <div className="round-label">Soru</div>
+              <div className="round-label">{t("quiz.question")}</div>
               <div style={{ fontSize: 22, fontWeight: 800 }}>
                 {quiz.currentIndex + 1} / {total}
               </div>

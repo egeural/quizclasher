@@ -1,4 +1,4 @@
-# Publishing "Bil ve Fethet" with Your Own Domain
+# Publishing "Quiz Clasher" with Your Own Domain
 
 **Your domain:** **quizclasher.com**
 

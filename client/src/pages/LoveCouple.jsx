@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 
 const TEMPLATE_GROUPS = [
   {
@@ -131,6 +132,7 @@ function advanceQuizState(state, pickedIndex) {
 }
 
 export default function LoveCouple() {
+  const { t } = useLanguage();
   const username = window.localStorage.getItem("bf_username") || "guest";
   const storageKey = STORAGE_KEY_PREFIX + username;
 
@@ -238,11 +240,9 @@ export default function LoveCouple() {
     <div className="glass-card glass-card--wide">
       {!quiz && (
         <>
-          <h1 className="glass-card__title">Love Couple Quiz Builder</h1>
+          <h1 className="glass-card__title">{t("loveCouple.title")}</h1>
           <p className="glass-card__subtitle">
-            Aşağıdaki hazır sorular için 1 doğru, 3 yanlış cevap yaz. İstersen
-            en altta kendi sorularını da ekleyebilirsin. Tüm cevaplar{" "}
-            <b>{username}</b> kullanıcına özel olarak bu cihazda saklanır.
+            {t("loveCouple.subtitle", { username })}
           </p>
 
           <div className="love-menu">
@@ -253,7 +253,7 @@ export default function LoveCouple() {
               }`}
               onClick={() => setView("edit")}
             >
-              Soruları düzenle
+              {t("loveCouple.editQuestions")}
             </button>
             <button
               type="button"
@@ -262,7 +262,7 @@ export default function LoveCouple() {
               }`}
               onClick={() => setView("list")}
             >
-              Tamamlanan sorular ({completedQuestions.length})
+              {t("loveCouple.completedQuestions", { count: completedQuestions.length })}
             </button>
             <button
               type="button"
@@ -270,7 +270,7 @@ export default function LoveCouple() {
               onClick={() => {
                 if (completedQuestions.length < QUIZ_QUESTION_COUNT) {
                   alert(
-                    `Oyuna başlamadan önce en az ${QUIZ_QUESTION_COUNT} tamamlanmış soruya ihtiyacın var. Şu an ${completedQuestions.length} tane var.`
+                    t("loveCouple.needMore", { required: QUIZ_QUESTION_COUNT, count: completedQuestions.length })
                   );
                   return;
                 }
@@ -284,7 +284,7 @@ export default function LoveCouple() {
                 });
               }}
             >
-              Love Couple Quiz'i başlat
+              {t("loveCouple.startQuiz")}
             </button>
           </div>
         </>
@@ -322,52 +322,52 @@ export default function LoveCouple() {
                 return (
                   <div key={qKey} className="quiz-edit-card">
                     <div className="quiz-edit-card__row">
-                      <label className="choice-label">Soru</label>
+                      <label className="choice-label">{t("loveCouple.question")}</label>
                       <div className="love-question__text" style={{ marginBottom: 0 }}>{qText}</div>
                     </div>
                     <div className="choice-grid">
                       <div className="quiz-edit-card__row choice-row--correct">
-                        <label className="choice-label">✓ Doğru cevap</label>
+                        <label className="choice-label">{t("loveCouple.correctAnswer")}</label>
                         <input
                           className="text-input choice-input"
                           value={data.correct}
                           onChange={(e) =>
                             updateAnswer(qKey, "correct", e.target.value)
                           }
-                          placeholder="Doğru şıkkı yaz"
+                          placeholder={t("loveCouple.correctPlaceholder")}
                         />
                       </div>
                       <div className="quiz-edit-card__row">
-                        <label className="choice-label">✗ Yanlış cevap 1</label>
+                        <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 1 })}</label>
                         <input
                           className="text-input choice-input"
                           value={data.wrong1}
                           onChange={(e) =>
                             updateAnswer(qKey, "wrong1", e.target.value)
                           }
-                          placeholder="Yanlış şık"
+                          placeholder={t("loveCouple.wrongPlaceholder")}
                         />
                       </div>
                       <div className="quiz-edit-card__row">
-                        <label className="choice-label">✗ Yanlış cevap 2</label>
+                        <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 2 })}</label>
                         <input
                           className="text-input choice-input"
                           value={data.wrong2}
                           onChange={(e) =>
                             updateAnswer(qKey, "wrong2", e.target.value)
                           }
-                          placeholder="Yanlış şık"
+                          placeholder={t("loveCouple.wrongPlaceholder")}
                         />
                       </div>
                       <div className="quiz-edit-card__row">
-                        <label className="choice-label">✗ Yanlış cevap 3</label>
+                        <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 3 })}</label>
                         <input
                           className="text-input choice-input"
                           value={data.wrong3}
                           onChange={(e) =>
                             updateAnswer(qKey, "wrong3", e.target.value)
                           }
-                          placeholder="Yanlış şık"
+                          placeholder={t("loveCouple.wrongPlaceholder")}
                         />
                       </div>
                     </div>
@@ -378,66 +378,65 @@ export default function LoveCouple() {
           ))}
 
         <section className="love-section">
-          <h2 className="love-section__title">Kendi Soruların</h2>
+          <h2 className="love-section__title">{t("loveCouple.yourQuestions")}</h2>
           <p className="glass-card__subtitle" style={{ marginBottom: 12 }}>
-            Burası tamamen size özel. İstediğin kadar soru ekleyebilir, her
-            biri için 1 doğru ve 3 yanlış cevap yazabilirsin.
+            {t("loveCouple.yourQuestionsDesc")}
           </p>
 
           {customQs.map((q) => (
             <div key={q.id} className="quiz-edit-card">
               <div className="quiz-edit-card__row">
-                <label className="choice-label">Soru metni</label>
+                <label className="choice-label">{t("loveCouple.questionText")}</label>
                 <input
                   className="text-input choice-input"
                   value={q.text}
                   onChange={(e) => updateCustom(q.id, "text", e.target.value)}
-                  placeholder="Kendi sorunu yaz"
+                  placeholder={t("loveCouple.customQuestionPlaceholder")}
                 />
               </div>
               <div className="choice-grid">
                 <div className="quiz-edit-card__row choice-row--correct">
-                  <label className="choice-label">✓ Doğru cevap</label>
+                  <label className="choice-label">{t("loveCouple.correctAnswer")}</label>
                   <input
                     className="text-input choice-input"
                     value={q.correct}
                     onChange={(e) =>
                       updateCustom(q.id, "correct", e.target.value)
                     }
-                    placeholder="Doğru şıkkı yaz"
+                    placeholder={t("loveCouple.correctPlaceholder")}
                   />
                 </div>
                 <div className="quiz-edit-card__row">
-                  <label className="choice-label">✗ Yanlış cevap 1</label>
+                  <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 1 })}</label>
                   <input
                     className="text-input choice-input"
                     value={q.wrong1}
                     onChange={(e) =>
                       updateCustom(q.id, "wrong1", e.target.value)
                     }
-                    placeholder="Yanlış şık"
+                    placeholder={t("loveCouple.wrongPlaceholder")}
                   />
                 </div>
                 <div className="quiz-edit-card__row">
-                  <label className="choice-label">✗ Yanlış cevap 2</label>
+                  <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 2 })}</label>
                   <input
                     className="text-input choice-input"
                     value={q.wrong2}
                     onChange={(e) =>
                       updateCustom(q.id, "wrong2", e.target.value)
                     }
-                    placeholder="Yanlış şık"
+                    placeholder={t("loveCouple.wrongPlaceholder")}
                   />
                 </div>
                 <div className="quiz-edit-card__row">
-                  <label className="choice-label">✗ Yanlış cevap 3</label>
+                  <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 3 })}</label>
                   <input
                     className="text-input choice-input"
                     value={q.wrong3}
                     onChange={(e) =>
                       updateCustom(q.id, "wrong3", e.target.value)
                     }
-                    placeholder="Yanlış şık"
+                    placeholder={t("loveCouple.wrongPlaceholder")}
                   />
                 </div>
               </div>
@@ -445,13 +444,13 @@ export default function LoveCouple() {
           ))}
 
           <button type="button" className="btn btn-ghost" onClick={addCustom}>
-            Yeni soru ekle
+            {t("loveCouple.addQuestion")}
           </button>
         </section>
 
         <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
           <button type="button" className="btn btn-secondary" onClick={saveAll}>
-            Tümünü kaydet
+            {t("loveCouple.saveAll")}
           </button>
         </div>
         </div>
@@ -461,8 +460,7 @@ export default function LoveCouple() {
         <div className="love-completed">
           {completedQuestions.length === 0 ? (
             <p className="glass-card__subtitle">
-              Henüz tamamen doldurulmuş bir sorun yok. Önce editör sekmesinde
-              tüm cevapları doldurmalısın.
+              {t("loveCouple.noCompleted")}
             </p>
           ) : (
             completedQuestions.map((q) => (
@@ -470,16 +468,16 @@ export default function LoveCouple() {
                 <div className="love-completed__question">{q.text}</div>
                 <ul className="love-completed__answers">
                   <li>
-                    <b>Doğru:</b> {q.correct}
+                    <b>{t("loveCouple.correct")}:</b> {q.correct}
                   </li>
                   <li>
-                    <b>Yanlış 1:</b> {q.wrong1}
+                    <b>{t("loveCouple.wrong")} 1:</b> {q.wrong1}
                   </li>
                   <li>
-                    <b>Yanlış 2:</b> {q.wrong2}
+                    <b>{t("loveCouple.wrong")} 2:</b> {q.wrong2}
                   </li>
                   <li>
-                    <b>Yanlış 3:</b> {q.wrong3}
+                    <b>{t("loveCouple.wrong")} 3:</b> {q.wrong3}
                   </li>
                 </ul>
               </div>
@@ -496,6 +494,7 @@ export default function LoveCouple() {
 }
 
 function LoveQuizView({ quiz, setQuiz }) {
+  const { t } = useLanguage();
   const current = quiz.questions[quiz.currentIndex];
 
   useEffect(() => {
@@ -527,23 +526,23 @@ function LoveQuizView({ quiz, setQuiz }) {
     let color = "#ef4444";
 
     if (percentage === 100) {
-      message = "MÜKEMMEL! Sen gerçek bir aşk uzmanısın! 🔥";
+      message = t("loveCouple.perfect");
       emoji = "💯";
       color = "#fbbf24";
     } else if (percentage >= 80) {
-      message = "Harika! Birbirinizi çok iyi tanıyorsunuz! 💕";
+      message = t("loveCouple.great");
       emoji = "🎉";
       color = "#22c55e";
     } else if (percentage >= 60) {
-      message = "İyi gidiyorsunuz! Biraz daha pratik yapın! 😊";
+      message = t("loveCouple.good");
       emoji = "💖";
       color = "#0ea5e9";
     } else if (percentage >= 40) {
-      message = "Hmm... Birbirinizi daha iyi tanımanız lazım! 🤔";
+      message = t("loveCouple.okay");
       emoji = "💭";
       color = "#f59e0b";
     } else {
-      message = "Vay be... Gerçekten tanıyor musunuz birbirinizi? 😅";
+      message = t("loveCouple.bad");
       emoji = "😬";
       color = "#ef4444";
     }
@@ -561,7 +560,7 @@ function LoveQuizView({ quiz, setQuiz }) {
         <div className="love-results__content">
           <div className="love-results__emoji">{emoji}</div>
           <h1 className="glass-card__title" style={{ marginTop: 8 }}>
-            Sonuçlar
+            {t("loveCouple.results")}
           </h1>
           <div className="love-results__score" style={{ color }}>
             {correctCount} / {total}
@@ -573,13 +572,13 @@ function LoveQuizView({ quiz, setQuiz }) {
 
           <div className="love-results__breakdown">
             <div className="love-breakdown-item">
-              <span className="love-breakdown-label">Doğru:</span>
+              <span className="love-breakdown-label">{t("loveCouple.correct")}:</span>
               <span className="love-breakdown-value" style={{ color: "#22c55e" }}>
                 {correctCount}
               </span>
             </div>
             <div className="love-breakdown-item">
-              <span className="love-breakdown-label">Yanlış:</span>
+              <span className="love-breakdown-label">{t("loveCouple.wrong")}:</span>
               <span className="love-breakdown-value" style={{ color: "#ef4444" }}>
                 {total - correctCount}
               </span>
@@ -592,7 +591,7 @@ function LoveQuizView({ quiz, setQuiz }) {
             onClick={() => setQuiz(null)}
             style={{ marginTop: 20 }}
           >
-            Tekrar Oyna 🔄
+            {t("loveCouple.playAgain")}
           </button>
         </div>
       </div>
@@ -606,7 +605,7 @@ function LoveQuizView({ quiz, setQuiz }) {
       <div className="question-layout">
         <div className="question-header">
           <div>
-            <div className="round-label">Soru</div>
+            <div className="round-label">{t("loveCouple.question")}</div>
             <div style={{ fontSize: 22, fontWeight: 800 }}>
               {quiz.currentIndex + 1} / {total}
             </div>

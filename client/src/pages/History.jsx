@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
 const STORAGE_KEY_PREFIX = "bf_historyquiz_";
 
@@ -262,7 +263,7 @@ export default function History() {
       storageKey,
       JSON.stringify({ customQs, savedAt: new Date().toISOString() })
     );
-    alert("Tarih soruların kaydedildi!");
+    alert(t("quiz.saved"));
   };
 
   const startQuiz = () => {
@@ -305,20 +306,20 @@ export default function History() {
   if (view === "start") {
     return (
       <div className="glass-card glass-card--wide">
-        <h1 className="glass-card__title">📜 History Quiz</h1>
+        <h1 className="glass-card__title">📜 {t("quiz.historyQuiz")}</h1>
         <p className="glass-card__subtitle">
-          {HISTORY_QUIZ_COUNT} soru, her biri {HISTORY_QUIZ_TIME} saniye. Antik çağdan günümüze.
+          {t("quiz.historySubtitle", { count: HISTORY_QUIZ_COUNT, time: HISTORY_QUIZ_TIME })}
         </p>
         <div className="sport-start-actions">
           <button type="button" className="btn btn-secondary sport-start-btn" onClick={startQuiz}>
-            Quiz'i başlat
+            {t("quiz.startQuiz")}
           </button>
           <button
             type="button"
             className="menu-footer__link"
             onClick={() => setView("builder")}
           >
-            Kendi tarih sorularımı ekle / düzenle
+            {t("quiz.addEditHistoryQuestions")}
           </button>
         </div>
       </div>
@@ -329,60 +330,60 @@ export default function History() {
     <div className="glass-card glass-card--wide">
       <div className="love-menu" style={{ marginBottom: 12 }}>
         <button type="button" className="btn btn-ghost" onClick={() => setView("start")}>
-          ← Quiz'e dön
+          {t("quiz.backToQuiz")}
         </button>
       </div>
-      <h2 className="sport-section__title">Kendi Tarih Soruların</h2>
+      <h2 className="sport-section__title">{t("quiz.yourHistoryQuestions")}</h2>
       <p className="glass-card__subtitle" style={{ marginBottom: 12 }}>
-        Her soru için 1 doğru ve 3 yanlış cevap (şık) yaz.
+        {t("quiz.historyBuilderDesc")}
       </p>
       <div className="quiz-edit-list">
         {customQs.map((q) => (
           <div key={q.id} className="quiz-edit-card">
             <div className="quiz-edit-card__row">
-              <label className="choice-label">Soru metni</label>
+              <label className="choice-label">{t("createOwn.questionText")}</label>
               <input
                 className="text-input choice-input"
                 value={q.text}
                 onChange={(e) => updateCustom(q.id, "text", e.target.value)}
-                placeholder="Örn: Osmanlı Devleti hangi yılda kuruldu?"
+                placeholder={t("quiz.historyQuestionPlaceholder")}
               />
             </div>
             <div className="choice-grid">
               <div className="quiz-edit-card__row choice-row--correct">
-                <label className="choice-label">✓ Doğru cevap</label>
+                <label className="choice-label">{t("createOwn.correctAnswer")}</label>
                 <input
                   className="text-input choice-input"
                   value={q.correct}
                   onChange={(e) => updateCustom(q.id, "correct", e.target.value)}
-                  placeholder="Doğru şıkkı yaz"
+                  placeholder={t("createOwn.correctPlaceholder")}
                 />
               </div>
               <div className="quiz-edit-card__row">
-                <label className="choice-label">✗ Yanlış cevap 1</label>
+                <label className="choice-label">{t("createOwn.wrongAnswer", { num: 1 })}</label>
                 <input
                   className="text-input choice-input"
                   value={q.wrong1}
                   onChange={(e) => updateCustom(q.id, "wrong1", e.target.value)}
-                  placeholder="Yanlış şık"
+                  placeholder={t("createOwn.wrongPlaceholder")}
                 />
               </div>
               <div className="quiz-edit-card__row">
-                <label className="choice-label">✗ Yanlış cevap 2</label>
+                <label className="choice-label">{t("createOwn.wrongAnswer", { num: 2 })}</label>
                 <input
                   className="text-input choice-input"
                   value={q.wrong2}
                   onChange={(e) => updateCustom(q.id, "wrong2", e.target.value)}
-                  placeholder="Yanlış şık"
+                  placeholder={t("createOwn.wrongPlaceholder")}
                 />
               </div>
               <div className="quiz-edit-card__row">
-                <label className="choice-label">✗ Yanlış cevap 3</label>
+                <label className="choice-label">{t("createOwn.wrongAnswer", { num: 3 })}</label>
                 <input
                   className="text-input choice-input"
                   value={q.wrong3}
                   onChange={(e) => updateCustom(q.id, "wrong3", e.target.value)}
-                  placeholder="Yanlış şık"
+                  placeholder={t("createOwn.wrongPlaceholder")}
                 />
               </div>
             </div>
@@ -390,11 +391,11 @@ export default function History() {
         ))}
       </div>
       <button type="button" className="btn btn-ghost" onClick={addCustom}>
-        + Yeni tarih sorusu ekle
+        {t("quiz.addHistoryQuestion")}
       </button>
       <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
         <button type="button" className="btn btn-secondary" onClick={saveAll}>
-          Kaydet
+          {t("createOwn.save")}
         </button>
       </div>
     </div>
@@ -402,6 +403,7 @@ export default function History() {
 }
 
 function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
+  const { t } = useLanguage();
   const current = quiz.questions[quiz.currentIndex];
 
   useEffect(() => {
@@ -433,7 +435,7 @@ function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
           <div className="love-results__content">
             <img src={historyGiphy} alt="" className="result-giphy" />
             <div className="love-results__emoji">📜</div>
-            <h1 className="glass-card__title">Sonuç</h1>
+            <h1 className="glass-card__title">{t("quiz.result")}</h1>
             <div className="love-results__score" style={{ color: "#f59e0b" }}>
               {correctCount} / {total}
             </div>
@@ -442,10 +444,10 @@ function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "center", flexWrap: "wrap" }}>
               <button type="button" className="btn btn-secondary" onClick={onPlayAgain}>
-                Tekrar oyna
+                {t("quiz.playAgain")}
               </button>
               <button type="button" className="btn btn-ghost" onClick={onBack}>
-                Menüye dön
+                {t("quiz.backToMenu")}
               </button>
             </div>
           </div>
@@ -461,7 +463,7 @@ function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
         <div className="question-layout">
           <div className="question-header">
             <div>
-              <div className="round-label">Soru</div>
+              <div className="round-label">{t("quiz.question")}</div>
               <div style={{ fontSize: 22, fontWeight: 800 }}>
                 {quiz.currentIndex + 1} / {total}
               </div>

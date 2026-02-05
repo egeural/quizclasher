@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 
 const STORAGE_KEY_PREFIX = "bf_customquiz_";
 const QUIZ_QUESTION_COUNT = 10;
@@ -40,6 +41,7 @@ function advanceQuizState(state, pickedIndex) {
 }
 
 export default function CreateYourOwn() {
+  const { t } = useLanguage();
   const username = window.localStorage.getItem("bf_username") || "guest";
   const storageKey = STORAGE_KEY_PREFIX + username;
 
@@ -88,7 +90,7 @@ export default function CreateYourOwn() {
       storageKey,
       JSON.stringify({ customQs, savedAt: new Date().toISOString() })
     );
-    alert("Quiz'in kaydedildi!");
+    alert(t("createOwn.saved"));
   };
 
   const completedQuestions = customQs.filter(
@@ -103,7 +105,7 @@ export default function CreateYourOwn() {
   const startQuiz = () => {
     if (completedQuestions.length < QUIZ_QUESTION_COUNT) {
       alert(
-        `En az ${QUIZ_QUESTION_COUNT} tamamlanmış soru gerekli. Şu an ${completedQuestions.length} tane var.`
+        t("createOwn.needMore", { required: QUIZ_QUESTION_COUNT, current: completedQuestions.length })
       );
       return;
     }
@@ -133,10 +135,9 @@ export default function CreateYourOwn() {
 
   return (
     <div className="glass-card glass-card--wide">
-      <h1 className="glass-card__title">Create your own quiz</h1>
+      <h1 className="glass-card__title">{t("createOwn.title")}</h1>
       <p className="glass-card__subtitle">
-        Sıfırdan kendi quiz'ini oluştur. Her soru için 1 doğru ve 3 yanlış cevap
-        yaz. En az {QUIZ_QUESTION_COUNT} soru doldurduktan sonra oynayabilirsin.
+        {t("createOwn.subtitle", { count: QUIZ_QUESTION_COUNT })}
       </p>
 
       <div className="love-menu">
@@ -145,14 +146,14 @@ export default function CreateYourOwn() {
           className={`btn btn-ghost ${view === "edit" ? "love-menu__btn--active" : ""}`}
           onClick={() => setView("edit")}
         >
-          Soruları düzenle
+          {t("createOwn.editQuestions")}
         </button>
         <button
           type="button"
           className={`btn btn-ghost ${view === "list" ? "love-menu__btn--active" : ""}`}
           onClick={() => setView("list")}
         >
-          Tamamlanan ({completedQuestions.length})
+          {t("createOwn.completed", { count: completedQuestions.length })}
         </button>
         <button
           type="button"
@@ -160,7 +161,7 @@ export default function CreateYourOwn() {
           onClick={startQuiz}
           disabled={completedQuestions.length < QUIZ_QUESTION_COUNT}
         >
-          Quiz'i başlat
+          {t("createOwn.startQuiz")}
         </button>
       </div>
 
@@ -170,65 +171,65 @@ export default function CreateYourOwn() {
             {customQs.map((q) => (
               <div key={q.id} className="quiz-edit-card">
                 <div className="quiz-edit-card__row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <label className="choice-label">Soru metni</label>
+                  <label className="choice-label">{t("createOwn.questionText")}</label>
                   <button
                     type="button"
                     className="btn btn-ghost"
                     style={{ fontSize: 12, padding: "4px 8px" }}
                     onClick={() => removeQuestion(q.id)}
                   >
-                    Sil
+                    {t("createOwn.delete")}
                   </button>
                 </div>
                 <input
                   className="text-input choice-input"
                   value={q.text}
                   onChange={(e) => updateQuestion(q.id, "text", e.target.value)}
-                  placeholder="Örn: Türkiye'nin başkenti neresidir?"
+                  placeholder={t("createOwn.questionPlaceholder")}
                 />
                 <div className="choice-grid">
                   <div className="quiz-edit-card__row choice-row--correct">
-                    <label className="choice-label">✓ Doğru cevap</label>
+                    <label className="choice-label">{t("createOwn.correctAnswer")}</label>
                     <input
                       className="text-input choice-input"
                       value={q.correct}
                       onChange={(e) =>
                         updateQuestion(q.id, "correct", e.target.value)
                       }
-                      placeholder="Doğru şıkkı yaz"
+                      placeholder={t("createOwn.correctPlaceholder")}
                     />
                   </div>
                   <div className="quiz-edit-card__row">
-                    <label className="choice-label">✗ Yanlış cevap 1</label>
+                    <label className="choice-label">{t("createOwn.wrongAnswer", { num: 1 })}</label>
                     <input
                       className="text-input choice-input"
                       value={q.wrong1}
                       onChange={(e) =>
                         updateQuestion(q.id, "wrong1", e.target.value)
                       }
-                      placeholder="Yanlış şık"
+                      placeholder={t("createOwn.wrongPlaceholder")}
                     />
                   </div>
                   <div className="quiz-edit-card__row">
-                    <label className="choice-label">✗ Yanlış cevap 2</label>
+                    <label className="choice-label">{t("createOwn.wrongAnswer", { num: 2 })}</label>
                     <input
                       className="text-input choice-input"
                       value={q.wrong2}
                       onChange={(e) =>
                         updateQuestion(q.id, "wrong2", e.target.value)
                       }
-                      placeholder="Yanlış şık"
+                      placeholder={t("createOwn.wrongPlaceholder")}
                     />
                   </div>
                   <div className="quiz-edit-card__row">
-                    <label className="choice-label">✗ Yanlış cevap 3</label>
+                    <label className="choice-label">{t("createOwn.wrongAnswer", { num: 3 })}</label>
                     <input
                       className="text-input choice-input"
                       value={q.wrong3}
                       onChange={(e) =>
                         updateQuestion(q.id, "wrong3", e.target.value)
                       }
-                      placeholder="Yanlış şık"
+                      placeholder={t("createOwn.wrongPlaceholder")}
                     />
                   </div>
                 </div>
@@ -236,11 +237,11 @@ export default function CreateYourOwn() {
             ))}
           </div>
           <button type="button" className="btn btn-ghost" onClick={addQuestion}>
-            + Yeni soru ekle
+            {t("createOwn.addQuestion")}
           </button>
           <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
             <button type="button" className="btn btn-secondary" onClick={saveAll}>
-              Kaydet
+              {t("createOwn.save")}
             </button>
           </div>
         </div>
@@ -250,17 +251,17 @@ export default function CreateYourOwn() {
         <div className="love-completed">
           {completedQuestions.length === 0 ? (
             <p className="glass-card__subtitle">
-              Henüz tamamlanmış soru yok. Düzenle sekmesinde soru ekleyip doldur.
+              {t("createOwn.noCompleted")}
             </p>
           ) : (
             completedQuestions.map((q) => (
               <div key={q.id} className="love-completed__item">
                 <div className="love-completed__question">{q.text}</div>
                 <ul className="love-completed__answers">
-                  <li><b>Doğru:</b> {q.correct}</li>
-                  <li><b>Yanlış 1:</b> {q.wrong1}</li>
-                  <li><b>Yanlış 2:</b> {q.wrong2}</li>
-                  <li><b>Yanlış 3:</b> {q.wrong3}</li>
+                  <li><b>{t("createOwn.correct")}:</b> {q.correct}</li>
+                  <li><b>{t("createOwn.wrong")} 1:</b> {q.wrong1}</li>
+                  <li><b>{t("createOwn.wrong")} 2:</b> {q.wrong2}</li>
+                  <li><b>{t("createOwn.wrong")} 3:</b> {q.wrong3}</li>
                 </ul>
               </div>
             ))
@@ -272,6 +273,7 @@ export default function CreateYourOwn() {
 }
 
 function CustomQuizPlay({ quiz, setQuiz, onExit }) {
+  const { t } = useLanguage();
   const current = quiz.questions[quiz.currentIndex];
 
   useEffect(() => {
@@ -300,7 +302,7 @@ function CustomQuizPlay({ quiz, setQuiz, onExit }) {
         <div className="love-quiz-results">
           <div className="love-results__content">
             <div className="love-results__emoji">🎯</div>
-            <h1 className="glass-card__title">Sonuç</h1>
+            <h1 className="glass-card__title">{t("createOwn.result")}</h1>
             <div className="love-results__score" style={{ color: "#0ea5e9" }}>
               {correctCount} / {total}
             </div>
@@ -308,7 +310,7 @@ function CustomQuizPlay({ quiz, setQuiz, onExit }) {
               %{percentage}
             </div>
             <button type="button" className="btn btn-secondary" onClick={onExit} style={{ marginTop: 20 }}>
-              Quiz listesine dön
+              {t("createOwn.backToQuiz")}
             </button>
           </div>
         </div>
@@ -323,7 +325,7 @@ function CustomQuizPlay({ quiz, setQuiz, onExit }) {
         <div className="question-layout">
           <div className="question-header">
             <div>
-              <div className="round-label">Soru</div>
+              <div className="round-label">{t("createOwn.question")}</div>
               <div style={{ fontSize: 22, fontWeight: 800 }}>
                 {quiz.currentIndex + 1} / {total}
               </div>

@@ -10,8 +10,11 @@ import Suggestions from "./pages/Suggestions.jsx";
 import Lobby from "./pages/Lobby.jsx";
 import Game from "./pages/Game.jsx";
 import Result from "./pages/Result.jsx";
+import LanguageToggle from "./components/LanguageToggle.jsx";
+import { useLanguage } from "./context/LanguageContext";
 
 function MusicPlayer() {
+  const { t } = useLanguage();
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
 
@@ -40,7 +43,7 @@ function MusicPlayer() {
       <button
         onClick={toggle}
         className={`music-toggle__btn ${playing ? "music-toggle__btn--on" : ""}`}
-        aria-label={playing ? "Müziği kapat" : "Müziği aç"}
+        aria-label={playing ? (t("common.muteMusic") || "Mute music") : (t("common.playMusic") || "Play music")}
       >
         {playing ? "🔊" : "🔇"}
       </button>
@@ -66,6 +69,7 @@ export default function App() {
           <Route path="/result" element={<Result />} />
         </Routes>
       </div>
+      <LanguageToggle />
       <MusicPlayer />
     </div>
   );
