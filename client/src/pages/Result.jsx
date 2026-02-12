@@ -9,7 +9,7 @@ export default function Result() {
   const { room, result, question, selfId, gameOver } = useWs();
 
   useEffect(() => {
-    if (!room) nav("/");
+    if (!room) nav("/menu");
   }, [room, nav]);
 
   useEffect(() => {

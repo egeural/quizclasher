@@ -514,9 +514,9 @@ wss.on("connection", (ws) => {
       room.answers.set(player.id, { choiceIndex, timeMs });
 
       // herkes cevapladıysa erken resolve
-      if (room.answers.size === room.players.size) {
-        resolveRound(code, room);
-      }
+      // if (room.answers.size === room.players.size) {
+      //   resolveRound(code, room);
+      // }
       return;
     }
 

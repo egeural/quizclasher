@@ -74,7 +74,10 @@ export default function Game() {
         <button
           type="button"
           className="menu-back"
-          onClick={() => nav("/lobby")}
+          onClick={() => {
+            actions.leaveRoom();
+            nav("/menu");
+          }}
         >
           {t("menu.back")}
         </button>
@@ -106,9 +109,8 @@ export default function Game() {
                 <button
                   key={i}
                   onClick={() => !sent && setPicked(i)}
-                  className={`answer-btn ${
-                    picked === i ? "answer-btn--picked" : ""
-                  }`}
+                  className={`answer-btn ${picked === i ? "answer-btn--picked" : ""
+                    }`}
                   disabled={sent}
                 >
                   {opt}
