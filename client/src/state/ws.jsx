@@ -106,6 +106,16 @@ export function WsProvider({ children }) {
         answer: (choiceIndex) => send({ type: "answer", choiceIndex }),
         chat: (text) => send({ type: "chat", text }),
         startGame: () => send({ type: "start_game" }),
+        leaveRoom: () => {
+          send({ type: "leave_room" });
+          setRoom(null);
+          setQuestion(null);
+          setResult(null);
+          setGameOver(null);
+          setConfig(null);
+          setChat([]);
+          setError(null);
+        }
       },
     }),
     [status, selfId, room, question, result, config, gameOver, chat, error]

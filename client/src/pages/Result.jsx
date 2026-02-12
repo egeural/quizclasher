@@ -126,7 +126,10 @@ export default function Result() {
             {t("result.winner", { name: gameOver.winner.name, score: gameOver.winner.score })}
           </p>
           <button
-            onClick={() => nav("/lobby")}
+            onClick={() => {
+              actions.leaveRoom();
+              nav("/lobby");
+            }}
             className="btn btn-primary"
             style={{ marginTop: 16, width: "100%" }}
           >

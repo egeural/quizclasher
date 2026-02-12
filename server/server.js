@@ -46,7 +46,7 @@ const MAX_PLAYERS_PER_ROOM = 4;      // maximum players allowed in a room
 const MIN_PLAYERS_TO_START = 2;      // creator can start early from this number
 const QUESTION_DURATION_MS = 20000;  // per-question time limit
 const RESULT_DURATION_MS = 5000;     // per-round result screen duration
-const WIN_SCORE = 300;               // first to reach this score wins (0 = no score limit)
+const WIN_SCORE = 0;                 // first to reach this score wins (0 = no score limit)
 
 const rooms = new Map();
 // roomCode -> {
@@ -437,6 +437,21 @@ wss.on("connection", (ws) => {
         },
       });
       broadcast(room, { type: "room_update", ...roomSnapshot(code, room) });
+      return;
+    }
+
+    if (type === "leave_room") {
+      const found = getRoomOf(ws);
+      if (!found) return;
+
+      const { code, room } = found;
+      room.players.delete(ws);
+
+      if (room.players.size === 0) {
+        rooms.delete(code);
+      } else {
+        broadcast(room, { type: "room_update", ...roomSnapshot(code, room) });
+      }
       return;
     }
 

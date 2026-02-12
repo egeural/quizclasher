@@ -26,7 +26,10 @@ export default function Lobby() {
         <button
           type="button"
           className="menu-back"
-          onClick={() => nav("/menu")}
+          onClick={() => {
+            if (room) actions.leaveRoom();
+            nav("/menu");
+          }}
         >
           {t("menu.back")}
         </button>
