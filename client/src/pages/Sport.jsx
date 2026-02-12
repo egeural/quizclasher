@@ -15,7 +15,7 @@ const SPORT_GROUPS = [
         correct: "France",
         wrong1: "Germany",
         wrong2: "Brazil",
-        wrong3: "Argentina",      
+        wrong3: "Argentina",
       },
       {
         id: "s2",
@@ -40,7 +40,7 @@ const SPORT_GROUPS = [
         correct: "Lionel Messi",
         wrong1: "Kylian Mbappé",
         wrong2: "Erling Haaland",
-        wrong3: "Kevin De Bruyne",      
+        wrong3: "Kevin De Bruyne",
       },
       {
         id: "s5",
@@ -1171,10 +1171,10 @@ function SportQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
             <img src={sportGiphy} alt="" className="result-giphy" />
             <div className="love-results__emoji">⚽</div>
             <h1 className="glass-card__title">{t("quiz.result")}</h1>
-            <div className="love-results__score" style={{ color: "#22c55e" }}>
+            <div className="love-results__score" style={{ color: "#FFB703" }}>
               {correctCount} / {total}
             </div>
-            <div className="love-results__percentage" style={{ color: "#22c55e" }}>
+            <div className="love-results__percentage" style={{ color: "#FFB703" }}>
               %{pct}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "center", flexWrap: "wrap" }}>

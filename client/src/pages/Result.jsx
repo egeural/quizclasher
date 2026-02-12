@@ -92,7 +92,7 @@ export default function Result() {
             fontSize: 14,
             textTransform: "uppercase",
             letterSpacing: "0.18em",
-            color: "#9ca3af",
+            color: "#8ECAE6",
             margin: "0 0 6px",
           }}
         >
@@ -121,7 +121,7 @@ export default function Result() {
       {gameOver ? (
         <div style={{ marginTop: 20, textAlign: "center", padding: "20px 0", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
           <div style={{ fontSize: 48, marginBottom: 8 }}>🏆</div>
-          <h3 style={{ fontSize: 24, marginBottom: 8, color: "#fbbf24" }}>{t("result.gameOver")}</h3>
+          <h3 style={{ fontSize: 24, marginBottom: 8, color: "#FFB703" }}>{t("result.gameOver")}</h3>
           <p className="glass-card__subtitle" style={{ fontSize: 16 }}>
             {t("result.winner", { name: gameOver.winner.name, score: gameOver.winner.score })}
           </p>

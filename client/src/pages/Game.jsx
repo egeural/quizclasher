@@ -139,7 +139,7 @@ export default function Game() {
           </div>
 
           <div className="question-card" style={{ maxHeight: 260, display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.18em", color: "#9ca3af", marginBottom: 6 }}>
+            <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.18em", color: "#8ECAE6", marginBottom: 6 }}>
               {t("game.roomChat")}
             </div>
             <div style={{ flex: 1, overflowY: "auto", fontSize: 13, paddingRight: 4 }}>

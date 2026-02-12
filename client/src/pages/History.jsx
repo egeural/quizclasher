@@ -338,9 +338,9 @@ export default function History() {
   return (
     <div className="glass-card glass-card--wide">
       <div style={{ marginBottom: 16 }}>
-        <button 
-          type="button" 
-          className="menu-back" 
+        <button
+          type="button"
+          className="menu-back"
           onClick={() => setView("start")}
         >
           {t("menu.back")}
@@ -449,10 +449,10 @@ function HistoryQuizPlay({ quiz, setQuiz, onBack, onPlayAgain }) {
             <img src={historyGiphy} alt="" className="result-giphy" />
             <div className="love-results__emoji">📜</div>
             <h1 className="glass-card__title">{t("quiz.result")}</h1>
-            <div className="love-results__score" style={{ color: "#f59e0b" }}>
+            <div className="love-results__score" style={{ color: "#FFB703" }}>
               {correctCount} / {total}
             </div>
-            <div className="love-results__percentage" style={{ color: "#f59e0b" }}>
+            <div className="love-results__percentage" style={{ color: "#FFB703" }}>
               %{pct}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 20, justifyContent: "center", flexWrap: "wrap" }}>

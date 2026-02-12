@@ -179,7 +179,7 @@ export default function Lobby() {
             <div className="room-panel__header">
               <div>
                 <div style={{ fontSize: 12, opacity: 0.8 }}>{t("lobby.roomCodeLabel")}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#fbbf24" }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#FFB703" }}>
                   {room.code}
                 </div>
                 <div style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>

@@ -50,7 +50,7 @@ export default function Menu() {
           <button
             type="button"
             className="menu-main-btn menu-main-btn--preloaded"
-            style={{ borderColor: "#fbbf24", background: "rgba(251, 191, 36, 0.1)" }}
+            style={{ borderColor: "#FFB703", background: "rgba(255, 183, 3, 0.1)" }}
             onClick={() => nav("/lobby")}
           >
             <span className="menu-main-btn__icon">⚔️</span>

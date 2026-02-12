@@ -32,7 +32,7 @@ export default function Suggestions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!message.trim()) {
       setError(t("suggestions.errorEmpty"));
       return;
@@ -94,7 +94,7 @@ export default function Suggestions() {
           {t("menu.back")}
         </button>
       </div>
-      
+
       <h1 className="glass-card__title">{t("suggestions.title")}</h1>
       <p className="glass-card__subtitle">
         {t("suggestions.subtitle")}
@@ -135,7 +135,7 @@ export default function Suggestions() {
         <div>
           <div className="field-label">
             {t("suggestions.messageLabel")}
-            <span style={{ color: "#ef4444", marginLeft: 4 }}>*</span>
+            <span style={{ color: "#FB8500", marginLeft: 4 }}>*</span>
           </div>
           <textarea
             name="message"
@@ -154,17 +154,17 @@ export default function Suggestions() {
             disabled={loading}
             maxLength={MAX_MESSAGE_LENGTH}
           />
-          <div style={{ 
-            fontSize: 12, 
-            color: message.length > MAX_MESSAGE_LENGTH * 0.9 ? "#f59e0b" : "#9ca3af", 
-            marginTop: 4 
+          <div style={{
+            fontSize: 12,
+            color: message.length > MAX_MESSAGE_LENGTH * 0.9 ? "#FB8500" : "#8ECAE6",
+            marginTop: 4
           }}>
             {message.length} / {MAX_MESSAGE_LENGTH} {t("suggestions.characters")}
           </div>
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="btn btn-primary"
           disabled={loading || !message.trim() || message.trim().length < 10 || message.trim().length > MAX_MESSAGE_LENGTH}
         >
@@ -183,8 +183,8 @@ export default function Suggestions() {
       </form>
 
       <div style={{ marginTop: 20, padding: 16, borderRadius: 12, background: "rgba(15, 23, 42, 0.5)", border: "1px solid rgba(148, 163, 184, 0.2)" }}>
-        <div style={{ fontSize: 13, color: "#9ca3af", lineHeight: 1.6 }}>
-          <strong style={{ color: "#e5e7eb" }}>{t("suggestions.noteTitle")}</strong>
+        <div style={{ fontSize: 13, color: "#8ECAE6", lineHeight: 1.6 }}>
+          <strong style={{ color: "white" }}>{t("suggestions.noteTitle")}</strong>
           <br />
           {t("suggestions.noteText")}
         </div>

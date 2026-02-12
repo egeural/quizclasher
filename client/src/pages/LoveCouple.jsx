@@ -259,18 +259,16 @@ export default function LoveCouple() {
           <div className="love-menu">
             <button
               type="button"
-              className={`btn btn-ghost ${
-                view === "edit" ? "love-menu__btn--active" : ""
-              }`}
+              className={`btn btn-ghost ${view === "edit" ? "love-menu__btn--active" : ""
+                }`}
               onClick={() => setView("edit")}
             >
               {t("loveCouple.editQuestions")}
             </button>
             <button
               type="button"
-              className={`btn btn-ghost ${
-                view === "list" ? "love-menu__btn--active" : ""
-              }`}
+              className={`btn btn-ghost ${view === "list" ? "love-menu__btn--active" : ""
+                }`}
               onClick={() => setView("list")}
             >
               {t("loveCouple.completedQuestions", { count: completedQuestions.length })}
@@ -308,9 +306,8 @@ export default function LoveCouple() {
               <button
                 key={group.id}
                 type="button"
-                className={`btn btn-ghost love-group-menu__btn ${
-                  activeGroupId === group.id ? "love-group-menu__btn--active" : ""
-                }`}
+                className={`btn btn-ghost love-group-menu__btn ${activeGroupId === group.id ? "love-group-menu__btn--active" : ""
+                  }`}
                 onClick={() => setActiveGroupId(group.id)}
               >
                 {group.title}
@@ -388,82 +385,82 @@ export default function LoveCouple() {
             </section>
           ))}
 
-        <section className="love-section">
-          <h2 className="love-section__title">{t("loveCouple.yourQuestions")}</h2>
-          <p className="glass-card__subtitle" style={{ marginBottom: 12 }}>
-            {t("loveCouple.yourQuestionsDesc")}
-          </p>
+          <section className="love-section">
+            <h2 className="love-section__title">{t("loveCouple.yourQuestions")}</h2>
+            <p className="glass-card__subtitle" style={{ marginBottom: 12 }}>
+              {t("loveCouple.yourQuestionsDesc")}
+            </p>
 
-          {customQs.map((q) => (
-            <div key={q.id} className="quiz-edit-card">
-              <div className="quiz-edit-card__row">
-                <label className="choice-label">{t("loveCouple.questionText")}</label>
-                <input
-                  className="text-input choice-input"
-                  value={q.text}
-                  onChange={(e) => updateCustom(q.id, "text", e.target.value)}
-                  placeholder={t("loveCouple.customQuestionPlaceholder")}
-                />
+            {customQs.map((q) => (
+              <div key={q.id} className="quiz-edit-card">
+                <div className="quiz-edit-card__row">
+                  <label className="choice-label">{t("loveCouple.questionText")}</label>
+                  <input
+                    className="text-input choice-input"
+                    value={q.text}
+                    onChange={(e) => updateCustom(q.id, "text", e.target.value)}
+                    placeholder={t("loveCouple.customQuestionPlaceholder")}
+                  />
+                </div>
+                <div className="choice-grid">
+                  <div className="quiz-edit-card__row choice-row--correct">
+                    <label className="choice-label">{t("loveCouple.correctAnswer")}</label>
+                    <input
+                      className="text-input choice-input"
+                      value={q.correct}
+                      onChange={(e) =>
+                        updateCustom(q.id, "correct", e.target.value)
+                      }
+                      placeholder={t("loveCouple.correctPlaceholder")}
+                    />
+                  </div>
+                  <div className="quiz-edit-card__row">
+                    <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 1 })}</label>
+                    <input
+                      className="text-input choice-input"
+                      value={q.wrong1}
+                      onChange={(e) =>
+                        updateCustom(q.id, "wrong1", e.target.value)
+                      }
+                      placeholder={t("loveCouple.wrongPlaceholder")}
+                    />
+                  </div>
+                  <div className="quiz-edit-card__row">
+                    <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 2 })}</label>
+                    <input
+                      className="text-input choice-input"
+                      value={q.wrong2}
+                      onChange={(e) =>
+                        updateCustom(q.id, "wrong2", e.target.value)
+                      }
+                      placeholder={t("loveCouple.wrongPlaceholder")}
+                    />
+                  </div>
+                  <div className="quiz-edit-card__row">
+                    <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 3 })}</label>
+                    <input
+                      className="text-input choice-input"
+                      value={q.wrong3}
+                      onChange={(e) =>
+                        updateCustom(q.id, "wrong3", e.target.value)
+                      }
+                      placeholder={t("loveCouple.wrongPlaceholder")}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="choice-grid">
-                <div className="quiz-edit-card__row choice-row--correct">
-                  <label className="choice-label">{t("loveCouple.correctAnswer")}</label>
-                  <input
-                    className="text-input choice-input"
-                    value={q.correct}
-                    onChange={(e) =>
-                      updateCustom(q.id, "correct", e.target.value)
-                    }
-                    placeholder={t("loveCouple.correctPlaceholder")}
-                  />
-                </div>
-                <div className="quiz-edit-card__row">
-                  <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 1 })}</label>
-                  <input
-                    className="text-input choice-input"
-                    value={q.wrong1}
-                    onChange={(e) =>
-                      updateCustom(q.id, "wrong1", e.target.value)
-                    }
-                    placeholder={t("loveCouple.wrongPlaceholder")}
-                  />
-                </div>
-                <div className="quiz-edit-card__row">
-                  <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 2 })}</label>
-                  <input
-                    className="text-input choice-input"
-                    value={q.wrong2}
-                    onChange={(e) =>
-                      updateCustom(q.id, "wrong2", e.target.value)
-                    }
-                    placeholder={t("loveCouple.wrongPlaceholder")}
-                  />
-                </div>
-                <div className="quiz-edit-card__row">
-                  <label className="choice-label">{t("loveCouple.wrongAnswer", { num: 3 })}</label>
-                  <input
-                    className="text-input choice-input"
-                    value={q.wrong3}
-                    onChange={(e) =>
-                      updateCustom(q.id, "wrong3", e.target.value)
-                    }
-                    placeholder={t("loveCouple.wrongPlaceholder")}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
 
-          <button type="button" className="btn btn-ghost" onClick={addCustom}>
-            {t("loveCouple.addQuestion")}
-          </button>
-        </section>
+            <button type="button" className="btn btn-ghost" onClick={addCustom}>
+              {t("loveCouple.addQuestion")}
+            </button>
+          </section>
 
-        <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
-          <button type="button" className="btn btn-secondary" onClick={saveAll}>
-            {t("loveCouple.saveAll")}
-          </button>
-        </div>
+          <div style={{ marginTop: 18, display: "flex", justifyContent: "flex-end" }}>
+            <button type="button" className="btn btn-secondary" onClick={saveAll}>
+              {t("loveCouple.saveAll")}
+            </button>
+          </div>
         </div>
       )}
 
@@ -534,28 +531,28 @@ function LoveQuizView({ quiz, setQuiz, onExit }) {
 
     let message = "";
     let emoji = "💔";
-    let color = "#ef4444";
+    let color = "#FB8500";
 
     if (percentage === 100) {
       message = t("loveCouple.perfect");
       emoji = "💯";
-      color = "#fbbf24";
+      color = "#FFB703";
     } else if (percentage >= 80) {
       message = t("loveCouple.great");
       emoji = "🎉";
-      color = "#22c55e";
+      color = "#219EBC";
     } else if (percentage >= 60) {
       message = t("loveCouple.good");
       emoji = "💖";
-      color = "#0ea5e9";
+      color = "#8ECAE6";
     } else if (percentage >= 40) {
       message = t("loveCouple.okay");
       emoji = "💭";
-      color = "#f59e0b";
+      color = "#FB8500";
     } else {
       message = t("loveCouple.bad");
       emoji = "😬";
-      color = "#ef4444";
+      color = "#FB8500";
     }
 
     return (
@@ -584,13 +581,13 @@ function LoveQuizView({ quiz, setQuiz, onExit }) {
           <div className="love-results__breakdown">
             <div className="love-breakdown-item">
               <span className="love-breakdown-label">{t("loveCouple.correct")}:</span>
-              <span className="love-breakdown-value" style={{ color: "#22c55e" }}>
+              <span className="love-breakdown-value" style={{ color: "#219EBC" }}>
                 {correctCount}
               </span>
             </div>
             <div className="love-breakdown-item">
               <span className="love-breakdown-label">{t("loveCouple.wrong")}:</span>
-              <span className="love-breakdown-value" style={{ color: "#ef4444" }}>
+              <span className="love-breakdown-value" style={{ color: "#FB8500" }}>
                 {total - correctCount}
               </span>
             </div>
@@ -625,41 +622,41 @@ function LoveQuizView({ quiz, setQuiz, onExit }) {
       <div className="love-quiz">
         <div className="question-layout">
           <div className="question-header">
-          <div>
-            <div className="round-label">{t("loveCouple.question")}</div>
-            <div style={{ fontSize: 22, fontWeight: 800 }}>
-              {quiz.currentIndex + 1} / {total}
+            <div>
+              <div className="round-label">{t("loveCouple.question")}</div>
+              <div style={{ fontSize: 22, fontWeight: 800 }}>
+                {quiz.currentIndex + 1} / {total}
+              </div>
+            </div>
+            <div className="timer-chip">
+              ⏱ <span>{quiz.timeLeft}s / {QUIZ_TIME_PER_QUESTION}s</span>
             </div>
           </div>
-          <div className="timer-chip">
-            ⏱ <span>{quiz.timeLeft}s / {QUIZ_TIME_PER_QUESTION}s</span>
-          </div>
-        </div>
 
-        <div className="timer-bar-wrapper">
-          <div
-            className="timer-bar-fill"
-            style={{
-              width: `${(quiz.timeLeft / QUIZ_TIME_PER_QUESTION) * 100}%`,
-            }}
-          />
-        </div>
-
-        <div className="question-card">
-          <div className="question-text">{current.text}</div>
-          <div className="answer-list">
-            {current.options.map((opt, idx) => (
-              <button
-                key={idx}
-                className="answer-btn"
-                onClick={() => handlePick(idx)}
-                disabled={quiz.timeLeft <= 0}
-              >
-                {opt.text}
-              </button>
-            ))}
+          <div className="timer-bar-wrapper">
+            <div
+              className="timer-bar-fill"
+              style={{
+                width: `${(quiz.timeLeft / QUIZ_TIME_PER_QUESTION) * 100}%`,
+              }}
+            />
           </div>
-        </div>
+
+          <div className="question-card">
+            <div className="question-text">{current.text}</div>
+            <div className="answer-list">
+              {current.options.map((opt, idx) => (
+                <button
+                  key={idx}
+                  className="answer-btn"
+                  onClick={() => handlePick(idx)}
+                  disabled={quiz.timeLeft <= 0}
+                >
+                  {opt.text}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

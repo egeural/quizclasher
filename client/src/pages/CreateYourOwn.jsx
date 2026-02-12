@@ -314,10 +314,10 @@ function CustomQuizPlay({ quiz, setQuiz, onExit }) {
           <div className="love-results__content">
             <div className="love-results__emoji">🎯</div>
             <h1 className="glass-card__title">{t("createOwn.result")}</h1>
-            <div className="love-results__score" style={{ color: "#0ea5e9" }}>
+            <div className="love-results__score" style={{ color: "#219EBC" }}>
               {correctCount} / {total}
             </div>
-            <div className="love-results__percentage" style={{ color: "#0ea5e9" }}>
+            <div className="love-results__percentage" style={{ color: "#219EBC" }}>
               %{percentage}
             </div>
             <button type="button" className="btn btn-secondary" onClick={onExit} style={{ marginTop: 20 }}>
