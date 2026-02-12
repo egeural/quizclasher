@@ -37,7 +37,7 @@ export default function Menu() {
           {t("menu.back")}
         </button>
       </div>
-      
+
       <div className="menu-hero">
         <h1 className="menu-hero__title">{t("menu.welcome", { username })}</h1>
         <p className="menu-hero__subtitle">
@@ -47,6 +47,17 @@ export default function Menu() {
 
       {!subView && (
         <div className="menu-main-buttons">
+          <button
+            type="button"
+            className="menu-main-btn menu-main-btn--preloaded"
+            style={{ borderColor: "#fbbf24", background: "rgba(251, 191, 36, 0.1)" }}
+            onClick={() => nav("/lobby")}
+          >
+            <span className="menu-main-btn__icon">⚔️</span>
+            <span className="menu-main-btn__label">{t("menu.multiplayer") || "Multiplayer"}</span>
+            <span className="menu-main-btn__hint">{t("menu.multiplayerHint") || "Play with friends"}</span>
+          </button>
+
           <button
             type="button"
             className="menu-main-btn menu-main-btn--create"

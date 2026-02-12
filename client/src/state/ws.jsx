@@ -101,7 +101,7 @@ export function WsProvider({ children }) {
       error,
       send,
       actions: {
-        createRoom: (name) => send({ type: "create_room", name }),
+        createRoom: (name, category, config = {}) => send({ type: "create_room", name, category, config }),
         joinRoom: (code, name) => send({ type: "join_room", code, name }),
         answer: (choiceIndex) => send({ type: "answer", choiceIndex }),
         chat: (text) => send({ type: "chat", text }),

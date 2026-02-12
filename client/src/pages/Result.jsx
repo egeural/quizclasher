@@ -65,9 +65,8 @@ export default function Result() {
         {result.awards.map((a) => (
           <div
             key={a.playerId}
-            className={`result-row ${
-              a.playerId === selfId ? "result-row--self" : ""
-            }`}
+            className={`result-row ${a.playerId === selfId ? "result-row--self" : ""
+              }`}
           >
             <div>
               <div>
@@ -103,9 +102,8 @@ export default function Result() {
           {leaderboard.map((p, idx) => (
             <div
               key={p.id}
-              className={`result-row ${
-                p.id === selfId ? "result-row--self" : ""
-              }`}
+              className={`result-row ${p.id === selfId ? "result-row--self" : ""
+                }`}
             >
               <div>
                 <div>
@@ -121,12 +119,20 @@ export default function Result() {
       </div>
 
       {gameOver ? (
-        <p className="glass-card__subtitle" style={{ marginTop: 16 }}>
-          {t("result.gameOver")}{" "}
-          <b>
+        <div style={{ marginTop: 20, textAlign: "center", padding: "20px 0", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+          <div style={{ fontSize: 48, marginBottom: 8 }}>🏆</div>
+          <h3 style={{ fontSize: 24, marginBottom: 8, color: "#fbbf24" }}>{t("result.gameOver")}</h3>
+          <p className="glass-card__subtitle" style={{ fontSize: 16 }}>
             {t("result.winner", { name: gameOver.winner.name, score: gameOver.winner.score })}
-          </b>
-        </p>
+          </p>
+          <button
+            onClick={() => nav("/lobby")}
+            className="btn btn-primary"
+            style={{ marginTop: 16, width: "100%" }}
+          >
+            {t("result.backToMenu")}
+          </button>
+        </div>
       ) : (
         <p className="glass-card__subtitle" style={{ marginTop: 16 }}>
           {t("result.nextRound")}

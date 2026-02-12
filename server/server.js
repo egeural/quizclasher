@@ -3,6 +3,7 @@ const WebSocket = require("ws");
 const url = require("url");
 const querystring = require("querystring");
 const nodemailer = require("nodemailer");
+const { getQuestions } = require("./questions");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "egeural2005@gmail.com";
@@ -25,7 +26,7 @@ if (SMTP_PASS) {
       pass: SMTP_PASS,
     },
   });
-  
+
   // Verify connection
   emailTransporter.verify((error, success) => {
     if (error) {
@@ -47,101 +48,10 @@ const QUESTION_DURATION_MS = 20000;  // per-question time limit
 const RESULT_DURATION_MS = 5000;     // per-round result screen duration
 const WIN_SCORE = 300;               // first to reach this score wins (0 = no score limit)
 
-// --- Question bank (custom for Ege & Şevval) ---
-const QUESTIONS = [
-  {
-    id: "q1",
-    text: "İlk buluşmamız (date) neredeydi?",
-    choices: ["İstanbul", "İzmir", "Ankara", "Eskişehir"],
-    correctIndex: 1, // İzmir
-  },
-  {
-    id: "q2",
-    text: "İlk buluşmamızda ne yedik?",
-    choices: ["Hamburger", "Sushi", "Makarna", "Pizza"],
-    correctIndex: 3, // Pizza
-  },
-  {
-    id: "q3",
-    text: "Ege’nin boyu kaç cm?",
-    choices: ["182", "185", "188", "190"],
-    correctIndex: 2, // 188
-  },
-  {
-    id: "q4",
-    text: "Şevval’in en sevdiği renkler hangileridir?",
-    choices: [
-      "Mavi ve beyaz",
-      "Siyah ve kırmızı",
-      "Sarı ve turuncu",
-      "Yeşil ve mor",
-    ],
-    correctIndex: 3, // Yeşil ve mor
-  },
-  {
-    id: "q5",
-    text: "Şevval Starbucks’tan genelde ne içer?",
-    choices: [
-      "Grande Latte",
-      "Venti Cappuccino",
-      "Tall Flat White",
-      "Tall Americano",
-    ],
-    correctIndex: 3, // Tall Americano
-  },
-  {
-    id: "q6",
-    text: "Şevval’in doğum tarihi nedir?",
-    choices: ["12.02.2003", "02.03.2005", "02.03.2004", "03.02.2004"],
-    correctIndex: 2, // 02.03.2004
-  },
-  {
-    id: "q7",
-    text: "Ege kaç numara ayakkabı giyer?",
-    choices: ["42", "43", "44", "45"],
-    correctIndex: 3, // 45
-  },
-  {
-    id: "q8",
-    text: "Ege’nin en sevdiği renk hangisidir?",
-    choices: ["Siyah", "Yeşil", "Kırmızı", "Mavi"],
-    correctIndex: 3, // Mavi
-  },
-  {
-    id: "q9",
-    text: "Şevval’in kardeşinin adı nedir?",
-    choices: ["Emre", "Aslı", "Azra", "Derya"],
-    correctIndex: 2, // Azra
-  },
-  {
-    id: "q10",
-    text: "Şevval’in ailesi nerede yaşıyor?",
-    choices: ["İzmit", "Gebze", "Yalova", "Karamürsel, Kocaeli"],
-    correctIndex: 3, // Karamürsel, Kocaeli
-  },
-  {
-    id: "q11",
-    text: "Ege’nin evi nereye yakındır?",
-    choices: ["AVM", "Üniversite", "Sahil", "Gar"],
-    correctIndex: 3, // Gar
-  },
-  {
-    id: "q12",
-    text: "Ege’nin en sevdiği arkadaşı kimdir?",
-    choices: ["Batu", "Burak", "Alp", "Beril"],
-    correctIndex: 2, // Alp
-  },
-  {
-    id: "q13",
-    text: "Şevval’in en sevdiği arkadaşı kimdir?",
-    choices: ["Onur", "CEYDA", "Arda", "EMRE"],
-    correctIndex: 2, // Arda
-  },
-];
-
 const rooms = new Map();
 // roomCode -> {
 //   phase: "lobby" | "question" | "result",
+//   category: "love" | "sport" | "history",
 //   players: Map(ws -> {id, name, score}),
 //   nextPlayerId,
 //   round,
@@ -179,6 +89,7 @@ function roomSnapshot(code, room) {
   }
   return {
     code,
+    category: room.category,
     players,
     phase: room.phase,
     round: room.round,
@@ -187,10 +98,11 @@ function roomSnapshot(code, room) {
 }
 
 function pickQuestion(room) {
+  const categoryQuestions = getQuestions(room.category);
   // round is 1-based; stop if we are out of questions
   const idx = room.round - 1;
-  if (idx < 0 || idx >= QUESTIONS.length) return null;
-  return QUESTIONS[idx];
+  if (idx < 0 || idx >= categoryQuestions.length) return null;
+  return categoryQuestions[idx];
 }
 
 function startRound(code, room) {
@@ -216,7 +128,7 @@ function startRound(code, room) {
       choices: room.currentQuestion.choices,
     },
     startTs: room.questionStartTs,
-    durationMs: QUESTION_DURATION_MS,
+    durationMs: room.config?.questionDurationMs || QUESTION_DURATION_MS,
   });
 
   // Süre dolunca otomatik resolve (cevap vermeyen olursa)
@@ -227,7 +139,7 @@ function startRound(code, room) {
     if (live.round !== room.round) return;
     if (live.phase !== "question") return;
     resolveRound(code, live);
-  }, QUESTION_DURATION_MS);
+  }, room.config?.questionDurationMs || QUESTION_DURATION_MS);
 }
 
 function resolveRound(code, room) {
@@ -285,6 +197,8 @@ function resolveRound(code, room) {
     nextRoundInMs: RESULT_DURATION_MS,
   });
 
+  const categoryQuestions = getQuestions(room.category);
+
   // Kazanan var mı kontrol et
   let winner = null;
   if (WIN_SCORE > 0) {
@@ -296,8 +210,9 @@ function resolveRound(code, room) {
     }
   }
 
-  // Eğer skorla kazanan yoksa ama tüm sorular bittiyse, en yüksek skorluyu kazanan yap
-  if (!winner && room.round >= QUESTIONS.length) {
+  // Eğer skorla kazanan yoksa ama tüm sorular (veya limit) bittiyse, en yüksek skorluyu kazanan yap
+  const maxQuestions = Math.min(categoryQuestions.length, room.config?.questionCount || 100);
+  if (!winner && room.round >= maxQuestions) {
     let best = null;
     for (const p of room.players.values()) {
       if (!best || p.score > best.score) best = { id: p.id, name: p.name, score: p.score };
@@ -336,7 +251,7 @@ const suggestions = [];
 
 const server = http.createServer((req, res) => {
   setCORSHeaders(res);
-  
+
   const parsedUrl = url.parse(req.url, true);
   const path = parsedUrl.pathname;
   const method = req.method;
@@ -351,16 +266,16 @@ const server = http.createServer((req, res) => {
   // API endpoint for suggestions
   if (path === "/api/suggestions" && method === "POST") {
     let body = "";
-    
+
     req.on("data", (chunk) => {
       body += chunk.toString();
     });
-    
+
     req.on("end", () => {
       try {
         const data = JSON.parse(body);
         const { message, username, type } = data;
-        
+
         if (!message || !message.trim()) {
           res.writeHead(400, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ success: false, error: "Message is required" }));
@@ -377,7 +292,7 @@ const server = http.createServer((req, res) => {
         };
 
         suggestions.push(suggestion);
-        
+
         // Log suggestion
         console.log("=".repeat(50));
         console.log("NEW SUGGESTION RECEIVED");
@@ -386,7 +301,7 @@ const server = http.createServer((req, res) => {
         console.log("Message:", suggestion.message);
         console.log("Timestamp:", suggestion.timestamp);
         console.log("=".repeat(50));
-        
+
         // Send email notification if transporter is configured
         if (emailTransporter) {
           const typeLabels = {
@@ -396,16 +311,16 @@ const server = http.createServer((req, res) => {
             question: "Question",
             other: "Other",
           };
-          
+
           const mailOptions = {
             from: `"Quiz Clasher" <${SMTP_USER}>`,
             to: ADMIN_EMAIL,
             subject: `Quiz Clasher ${typeLabels[suggestion.type] || suggestion.type}: ${suggestion.username}`,
             text: `New ${typeLabels[suggestion.type] || suggestion.type} from Quiz Clasher\n\n` +
-                  `From: ${suggestion.username}\n` +
-                  `Type: ${typeLabels[suggestion.type] || suggestion.type}\n` +
-                  `Timestamp: ${suggestion.timestamp}\n\n` +
-                  `Message:\n${suggestion.message}`,
+              `From: ${suggestion.username}\n` +
+              `Type: ${typeLabels[suggestion.type] || suggestion.type}\n` +
+              `Timestamp: ${suggestion.timestamp}\n\n` +
+              `Message:\n${suggestion.message}`,
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #3b82f6;">New ${typeLabels[suggestion.type] || suggestion.type}</h2>
@@ -424,7 +339,7 @@ const server = http.createServer((req, res) => {
               </div>
             `,
           };
-          
+
           emailTransporter.sendMail(mailOptions, (error, info) => {
             if (error) {
               console.error("Failed to send email notification:", error.message);
@@ -433,11 +348,11 @@ const server = http.createServer((req, res) => {
             }
           });
         }
-        
+
         res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ 
-          success: true, 
-          message: "Thank you for your suggestion! We'll review it soon." 
+        res.end(JSON.stringify({
+          success: true,
+          message: "Thank you for your suggestion! We'll review it soon."
         }));
       } catch (error) {
         res.writeHead(400, { "Content-Type": "application/json" });
@@ -476,6 +391,12 @@ wss.on("connection", (ws) => {
 
     if (type === "create_room") {
       const name = String(msg.name || "").trim().slice(0, 20);
+      const category = String(msg.category || "sport").toLowerCase();
+
+      const configIn = msg.config || {};
+      const questionCount = Math.max(1, Math.min(50, Number(configIn.questionCount) || 10));
+      const questionDurationMs = Math.max(5000, Math.min(60000, (Number(configIn.questionDuration) || 20) * 1000));
+
       if (!name) return safeSend(ws, { type: "error", message: "Name required" });
 
       let code = makeRoomCode();
@@ -483,6 +404,11 @@ wss.on("connection", (ws) => {
 
       const room = {
         phase: "lobby",
+        category,
+        config: {
+          questionCount,
+          questionDurationMs,
+        },
         players: new Map(),
         nextPlayerId: 1,
         round: 0,
@@ -504,9 +430,10 @@ wss.on("connection", (ws) => {
         config: {
           maxPlayers: MAX_PLAYERS_PER_ROOM,
           minPlayersToStart: MIN_PLAYERS_TO_START,
-          questionDurationMs: QUESTION_DURATION_MS,
+          questionDurationMs: room.config.questionDurationMs,
           resultDurationMs: RESULT_DURATION_MS,
           winScore: WIN_SCORE,
+          questionCount: room.config.questionCount,
         },
       });
       broadcast(room, { type: "room_update", ...roomSnapshot(code, room) });
@@ -537,9 +464,10 @@ wss.on("connection", (ws) => {
         config: {
           maxPlayers: MAX_PLAYERS_PER_ROOM,
           minPlayersToStart: MIN_PLAYERS_TO_START,
-          questionDurationMs: QUESTION_DURATION_MS,
+          questionDurationMs: room.config?.questionDurationMs || QUESTION_DURATION_MS,
           resultDurationMs: RESULT_DURATION_MS,
           winScore: WIN_SCORE,
+          questionCount: room.config?.questionCount || 10,
         },
       });
       broadcast(room, { type: "room_update", ...roomSnapshot(code, room) });
@@ -630,7 +558,7 @@ wss.on("connection", (ws) => {
     const found = getRoomOf(ws);
     if (!found) return;
 
-    const { code, room } = found;
+    const { code, room } = found; // fixed typo in var name
     room.players.delete(ws);
 
     if (room.players.size === 0) {

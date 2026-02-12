@@ -51,6 +51,11 @@ const translations = {
       startGameNow: "Start game now",
       highScore: "high score",
       roomHint: "* Room starts automatically when it reaches {maxPlayers} players, room leader can start early with at least {minPlayers} players. Question duration ~{duration}s, first to reach {winScore} points wins.",
+      selectCategory: "Select Category",
+      questionCount: "Question Count",
+      questionDuration: "Question Duration",
+      seconds: "seconds",
+      questions: "questions",
     },
     // Game
     game: {
@@ -82,6 +87,7 @@ const translations = {
       winner: "{name} ({score} points) is the winner of this battle.",
       nextRound: "New round will start automatically in a few seconds. Get ready commander!",
       you: "you",
+      backToMenu: "Back to Menu",
     },
     // Create Your Own
     createOwn: {
@@ -239,6 +245,11 @@ const translations = {
       startGameNow: "Oyunu şimdi başlat",
       highScore: "yüksek skor",
       roomHint: "* Oda {maxPlayers} kişi olduğunda otomatik başlar, oda lideri en az {minPlayers} kişiyle erken başlatabilir. Soru süresi ~{duration}s, ilk {winScore} puana ulaşan kazanır.",
+      selectCategory: "Kategori Seç",
+      questionCount: "Soru Sayısı",
+      questionDuration: "Soru Süresi",
+      seconds: "saniye",
+      questions: "soru",
     },
     // Game
     game: {
@@ -270,6 +281,7 @@ const translations = {
       winner: "{name} ({score} puan) bu savaşın galibi.",
       nextRound: "Yeni tur birkaç saniye içinde otomatik başlayacak. Hazır ol komutan!",
       you: "sen",
+      backToMenu: "Menüye Dön",
     },
     // Create Your Own
     createOwn: {
