@@ -1,7 +1,8 @@
+const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
-const url = require("url");
-const querystring = require("querystring");
+const path = require("path");
+// url and querystring no longer needed with express
 const nodemailer = require("nodemailer");
 const { getQuestions } = require("./questions");
 
@@ -239,139 +240,108 @@ function resolveRound(code, room) {
   }, RESULT_DURATION_MS);
 }
 
-// Handle CORS
-function setCORSHeaders(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
+// --- Express App Setup ---
+const app = express();
+const server = http.createServer(app);
+
+// Enable JSON parsing for API requests
+app.use(express.json());
+
+// Serve static files from React app
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // Store suggestions (in production, use a database)
 const suggestions = [];
 
-const server = http.createServer((req, res) => {
-  setCORSHeaders(res);
+// API: Submit a suggestion
+app.post("/api/suggestions", (req, res) => {
+  const { message, username, type } = req.body;
 
-  const parsedUrl = url.parse(req.url, true);
-  const path = parsedUrl.pathname;
-  const method = req.method;
-
-  // Handle OPTIONS for CORS
-  if (method === "OPTIONS") {
-    res.writeHead(200);
-    res.end();
-    return;
+  if (!message || !message.trim()) {
+    return res.status(400).json({ success: false, error: "Message is required" });
   }
 
-  // API endpoint for suggestions
-  if (path === "/api/suggestions" && method === "POST") {
-    let body = "";
+  const suggestion = {
+    id: Date.now().toString(),
+    message: message.trim(),
+    username: username || "Anonymous",
+    type: type || "general",
+    timestamp: new Date().toISOString(),
+    ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown",
+  };
 
-    req.on("data", (chunk) => {
-      body += chunk.toString();
-    });
+  suggestions.push(suggestion);
 
-    req.on("end", () => {
-      try {
-        const data = JSON.parse(body);
-        const { message, username, type } = data;
+  // Log suggestion
+  console.log("=".repeat(50));
+  console.log("NEW SUGGESTION RECEIVED");
+  console.log("Type:", suggestion.type);
+  console.log("From:", suggestion.username);
+  console.log("Message:", suggestion.message);
+  console.log("Timestamp:", suggestion.timestamp);
+  console.log("=".repeat(50));
 
-        if (!message || !message.trim()) {
-          res.writeHead(400, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ success: false, error: "Message is required" }));
-          return;
-        }
+  // Send email notification if transporter is configured
+  if (emailTransporter) {
+    const typeLabels = {
+      general: "General Suggestion",
+      feature: "Feature Request",
+      bug: "Bug Report",
+      question: "Question",
+      other: "Other",
+    };
 
-        const suggestion = {
-          id: Date.now().toString(),
-          message: message.trim(),
-          username: username || "Anonymous",
-          type: type || "general",
-          timestamp: new Date().toISOString(),
-          ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown",
-        };
+    const mailOptions = {
+      from: `"Quiz Clasher" <${SMTP_USER}>`,
+      to: ADMIN_EMAIL,
+      subject: `Quiz Clasher ${typeLabels[suggestion.type] || suggestion.type}: ${suggestion.username}`,
+      text: `New ${typeLabels[suggestion.type] || suggestion.type} from Quiz Clasher\n\n` +
+        `From: ${suggestion.username}\n` +
+        `Type: ${typeLabels[suggestion.type] || suggestion.type}\n` +
+        `Timestamp: ${suggestion.timestamp}\n\n` +
+        `Message:\n${suggestion.message}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #3b82f6;">New ${typeLabels[suggestion.type] || suggestion.type}</h2>
+          <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin: 8px 0;"><strong>From:</strong> ${suggestion.username}</p>
+            <p style="margin: 8px 0;"><strong>Type:</strong> ${typeLabels[suggestion.type] || suggestion.type}</p>
+            <p style="margin: 8px 0;"><strong>Timestamp:</strong> ${new Date(suggestion.timestamp).toLocaleString()}</p>
+          </div>
+          <div style="background: #ffffff; padding: 20px; border-left: 4px solid #3b82f6; margin: 16px 0;">
+            <h3 style="margin-top: 0; color: #1f2937;">Message:</h3>
+            <p style="color: #374151; white-space: pre-wrap; line-height: 1.6;">${suggestion.message.replace(/\n/g, "<br>")}</p>
+          </div>
+          <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
+            This is an automated message from Quiz Clasher Suggestions System.
+          </p>
+        </div>
+      `,
+    };
 
-        suggestions.push(suggestion);
-
-        // Log suggestion
-        console.log("=".repeat(50));
-        console.log("NEW SUGGESTION RECEIVED");
-        console.log("Type:", suggestion.type);
-        console.log("From:", suggestion.username);
-        console.log("Message:", suggestion.message);
-        console.log("Timestamp:", suggestion.timestamp);
-        console.log("=".repeat(50));
-
-        // Send email notification if transporter is configured
-        if (emailTransporter) {
-          const typeLabels = {
-            general: "General Suggestion",
-            feature: "Feature Request",
-            bug: "Bug Report",
-            question: "Question",
-            other: "Other",
-          };
-
-          const mailOptions = {
-            from: `"Quiz Clasher" <${SMTP_USER}>`,
-            to: ADMIN_EMAIL,
-            subject: `Quiz Clasher ${typeLabels[suggestion.type] || suggestion.type}: ${suggestion.username}`,
-            text: `New ${typeLabels[suggestion.type] || suggestion.type} from Quiz Clasher\n\n` +
-              `From: ${suggestion.username}\n` +
-              `Type: ${typeLabels[suggestion.type] || suggestion.type}\n` +
-              `Timestamp: ${suggestion.timestamp}\n\n` +
-              `Message:\n${suggestion.message}`,
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #3b82f6;">New ${typeLabels[suggestion.type] || suggestion.type}</h2>
-                <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-                  <p style="margin: 8px 0;"><strong>From:</strong> ${suggestion.username}</p>
-                  <p style="margin: 8px 0;"><strong>Type:</strong> ${typeLabels[suggestion.type] || suggestion.type}</p>
-                  <p style="margin: 8px 0;"><strong>Timestamp:</strong> ${new Date(suggestion.timestamp).toLocaleString()}</p>
-                </div>
-                <div style="background: #ffffff; padding: 20px; border-left: 4px solid #3b82f6; margin: 16px 0;">
-                  <h3 style="margin-top: 0; color: #1f2937;">Message:</h3>
-                  <p style="color: #374151; white-space: pre-wrap; line-height: 1.6;">${suggestion.message.replace(/\n/g, '<br>')}</p>
-                </div>
-                <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-                  This is an automated message from Quiz Clasher Suggestions System.
-                </p>
-              </div>
-            `,
-          };
-
-          emailTransporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.error("Failed to send email notification:", error.message);
-            } else {
-              console.log("Email notification sent successfully:", info.messageId);
-            }
-          });
-        }
-
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({
-          success: true,
-          message: "Thank you for your suggestion! We'll review it soon."
-        }));
-      } catch (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ success: false, error: "Invalid request data" }));
+    emailTransporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Failed to send email notification:", error.message);
+      } else {
+        console.log("Email notification sent successfully:", info.messageId);
       }
     });
-    return;
   }
 
-  // Get suggestions endpoint (for admin - add authentication in production)
-  if (path === "/api/suggestions" && method === "GET") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ suggestions }));
-    return;
-  }
+  res.json({
+    success: true,
+    message: "Thank you for your suggestion! We'll review it soon."
+  });
+});
 
-  // Default response
-  res.writeHead(200);
-  res.end("Quiz Clasher WS server running.\n");
+// API: Get suggestions (admin only - add auth in production)
+app.get("/api/suggestions", (req, res) => {
+  res.json({ suggestions });
+});
+
+// Catch-all handler: Serve React app for any other route
+app.get(/(.*)/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 const wss = new WebSocket.Server({ server });
